@@ -3,9 +3,14 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/theme/colors.dart';
 
-class EditCollectionPage extends StatelessWidget {
+class EditCollectionPage extends StatefulWidget {
   const EditCollectionPage({Key? key}) : super(key: key);
 
+  @override
+  _EditCollectionPageState createState() => _EditCollectionPageState();
+}
+
+class _EditCollectionPageState extends State<EditCollectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
