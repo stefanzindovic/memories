@@ -3,9 +3,14 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/theme/colors.dart';
 
-class AddCollectionPage extends StatelessWidget {
+class AddCollectionPage extends StatefulWidget {
   const AddCollectionPage({Key? key}) : super(key: key);
 
+  @override
+  _AddCollectionPageState createState() => _AddCollectionPageState();
+}
+
+class _AddCollectionPageState extends State<AddCollectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
