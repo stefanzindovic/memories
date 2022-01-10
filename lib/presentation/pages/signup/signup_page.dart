@@ -93,6 +93,13 @@ class _SignupPageState extends State<SignupPage> {
                               decoration: const InputDecoration(
                                 hintText: 'koristite najmanje 8 karaktera...',
                               ),
+                              validator: (value) {
+                                if (value!.length < 8 || value.length > 24) {
+                                  return 'Unešena lozinka nije validna. Molimo vas da unesete lozinku koja je duža od 8 i krća od 24 karaktera.';
+                                } else {
+                                  setState(() => _email = value);
+                                }
+                              },
                             ),
                             SizedBox(
                               height: 20.h,
