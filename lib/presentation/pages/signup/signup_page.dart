@@ -17,6 +17,32 @@ class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
   String _email = '';
   String _password = '';
+  String? errorMessage;
+  SignupStatus signupStatus = SignupStatus.initial;
+
+  Future<SignupStatus> signupUser(
+      {required String email, required String password}) async {
+    SignupStatus status = signupStatus;
+    try {
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      status = SignupStatus.success;
+    } on FirebaseAuthException catch (e) {
+      print(e);
+      if (e.code == 'email-already-in-use') {
+        errorMessage =
+            'Željena e-mail adresa je već u upotrebi. Molimo vas da pokušate ponovo sa nekom drugom e-mail adresom.';
+      }
+      status = SignupStatus.error;
+    } catch (e) {
+      print(e);
+      errorMessage =
+          'Došlo je do greške pri kreiranju vašeg korisničkog računa. Molimo vas da pokušate ponovo malo kasnije.';
+      status = SignupStatus.error;
+    }
+
+    return status;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,33 +139,62 @@ class _SignupPageState extends State<SignupPage> {
                               children: [
                                 Align(
                                   child: ElevatedButton(
-                                    onPressed: () {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: backgroundColor,
-                                          content: Text(
-                                            'Došlo je do greške pri kreiranju vašeg korisničkog računa. Molimo vas da pokušate ponovo!',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2,
-                                          ),
-                                          duration: const Duration(
-                                              milliseconds: 1500),
-                                        ),
-                                      );
-                                    },
-                                    child: Row(
-                                      children: [
-                                        const Text('Registrujte se'),
-                                        SizedBox(
-                                          width: 5.w,
-                                        ),
-                                        const Icon(
-                                          FeatherIcons.arrowRight,
-                                        ),
-                                      ],
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: Size(170.w, 65.h),
                                     ),
+                                    onPressed: () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        setState(() => signupStatus =
+                                            SignupStatus.loading);
+                                        SignupStatus result = await signupUser(
+                                            email: _email, password: _password);
+                                        if (result == SignupStatus.success) {
+                                          print("Sve je u redu");
+                                          Navigator.pushNamed(
+                                              context, '/more-info');
+                                        } else if (result ==
+                                            SignupStatus.error) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              backgroundColor: backgroundColor,
+                                              content: Text(
+                                                errorMessage.toString(),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText2,
+                                              ),
+                                              duration: const Duration(
+                                                  milliseconds: 1500),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                      setState(() =>
+                                          signupStatus = SignupStatus.initial);
+                                    },
+                                    child:
+                                        (signupStatus == SignupStatus.initial)
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  const Text('Registrujte se'),
+                                                  SizedBox(
+                                                    width: 5.w,
+                                                  ),
+                                                  const Icon(
+                                                    FeatherIcons.arrowRight,
+                                                  ),
+                                                ],
+                                              )
+                                            : SizedBox(
+                                                width: 24.w,
+                                                height: 24.h,
+                                                child:
+                                                    const CircularProgressIndicator(
+                                                        color: lightColor),
+                                              ),
                                   ),
                                 ),
                               ],
