@@ -36,7 +36,7 @@ Route generateApplicationRouter(RouteSettings settings) {
           builder: (BuildContext context) => const EditCollectionPage());
     case editMemoryRoute:
       return MaterialPageRoute(
-          builder: (BuildContext context) => const editMemoryPage());
+          builder: (BuildContext context) => const EditMemoryPage());
     case settingsRoute:
       return MaterialPageRoute(
           builder: (BuildContext context) => const ProfileOptionsPage());
