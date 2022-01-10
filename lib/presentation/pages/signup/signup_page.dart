@@ -150,8 +150,10 @@ class _SignupPageState extends State<SignupPage> {
                                             email: _email, password: _password);
                                         if (result == SignupStatus.success) {
                                           print("Sve je u redu");
-                                          Navigator.pushNamed(
-                                              context, '/more-info');
+                                          Navigator.pushNamedAndRemoveUntil(
+                                              context,
+                                              '/more-info',
+                                              (route) => false);
                                         } else if (result ==
                                             SignupStatus.error) {
                                           ScaffoldMessenger.of(context)
@@ -164,8 +166,8 @@ class _SignupPageState extends State<SignupPage> {
                                                     .textTheme
                                                     .bodyText2,
                                               ),
-                                              duration: const Duration(
-                                                  milliseconds: 1500),
+                                              duration:
+                                                  const Duration(seconds: 2),
                                             ),
                                           );
                                         }
@@ -216,7 +218,9 @@ class _SignupPageState extends State<SignupPage> {
                             .copyWith(fontSize: 12.sp),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/sign-in');
+                        },
                         child: Text(
                           'Prijavite se!',
                           style: TextStyle(fontSize: 12.sp),
