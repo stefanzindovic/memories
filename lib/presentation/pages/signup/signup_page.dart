@@ -61,6 +61,7 @@ class _SignupPageState extends State<SignupPage> {
                               height: 10.h,
                             ),
                             TextFormField(
+                              style: const TextStyle(color: lightColor),
                               keyboardType: TextInputType.emailAddress,
                               decoration: const InputDecoration(
                                 hintText: 'npr. markomarkovic@gmail.com',
@@ -109,7 +110,9 @@ class _SignupPageState extends State<SignupPage> {
                               children: [
                                 Align(
                                   child: ElevatedButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {}
+                                    },
                                     child: Row(
                                       children: [
                                         const Text('Registrujte se'),
