@@ -3,9 +3,14 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/theme/colors.dart';
 
-class EditUserInfoPage extends StatelessWidget {
+class EditUserInfoPage extends StatefulWidget {
   const EditUserInfoPage({Key? key}) : super(key: key);
 
+  @override
+  _EditUserInfoPageState createState() => _EditUserInfoPageState();
+}
+
+class _EditUserInfoPageState extends State<EditUserInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
