@@ -4,9 +4,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:memories/theme/colors.dart';
 
-class AddMemoryPage extends StatelessWidget {
-  const AddMemoryPage({Key? key}) : super(key: key);
+class AddMemooryPage extends StatefulWidget {
+  const AddMemooryPage({Key? key}) : super(key: key);
 
+  @override
+  _AddMemooryPageState createState() => _AddMemooryPageState();
+}
+
+class _AddMemooryPageState extends State<AddMemooryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
