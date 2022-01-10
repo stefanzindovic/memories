@@ -50,6 +50,7 @@ class _SignupPageState extends State<SignupPage> {
                         height: 20.h,
                       ),
                       Form(
+                        key: _formKey,
                         child: Column(
                           children: [
                             const Align(
@@ -64,6 +65,16 @@ class _SignupPageState extends State<SignupPage> {
                               decoration: const InputDecoration(
                                 hintText: 'npr. markomarkovic@gmail.com',
                               ),
+                              validator: (value) {
+                                if (value!.length < 3 ||
+                                    value.length > 320 ||
+                                    !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                        .hasMatch(value)) {
+                                  return 'Unešena e-mail adresa je ne validna. Molimo vas da unesete e-mail adresu koja je validna. (ime@domen.com)';
+                                } else {
+                                  setState(() => _email = value);
+                                }
+                              },
                             ),
                             SizedBox(
                               height: 20.h,
