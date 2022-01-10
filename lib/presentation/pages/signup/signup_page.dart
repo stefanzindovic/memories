@@ -11,6 +11,10 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  final _formKey = GlobalKey<FormState>();
+  String _email = '';
+  String _password = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
