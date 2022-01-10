@@ -1,0 +1,13 @@
+const String homeRoute = '/';
+const String addMemoryRoute = '/add-memory';
+const String editMemoryRoute = '/edit-memory';
+const String memoryRoute = '/memory';
+const String addCollectionRoute = '/add-collection';
+const String editCollectionRoute = '/edit-collection';
+const String collectionRoute = '/collection';
+const String editProfileRoute = '/edit-profile';
+const String settingsRoute = '/settings';
+const String resetPasswordRoute = '/reset-password';
+const String signInRoute = '/sign-in';
+const String signUpRoute = '/sign-up';
+const String moreInfoRoute = '/more-info';
