@@ -5,12 +5,7 @@ class AuthenticationModel {
   String? email;
 
   AuthenticationModel({
-    required this.uid,
-    required this.email,
+    this.uid,
+    this.email,
   });
-
-  AuthenticationModel.fromFirebaseUser({User? user}) {
-    uid = user!.uid;
-    email = user.email!;
-  }
 }
