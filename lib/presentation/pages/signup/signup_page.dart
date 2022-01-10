@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -98,7 +99,7 @@ class _SignupPageState extends State<SignupPage> {
                                 if (value!.length < 8 || value.length > 24) {
                                   return 'Unešena lozinka nije validna. Molimo vas da unesete lozinku koja je duža od 8 i krća od 24 karaktera.';
                                 } else {
-                                  setState(() => _email = value);
+                                  setState(() => _password = value);
                                 }
                               },
                             ),
@@ -111,7 +112,20 @@ class _SignupPageState extends State<SignupPage> {
                                 Align(
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      if (_formKey.currentState!.validate()) {}
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          backgroundColor: backgroundColor,
+                                          content: Text(
+                                            'Došlo je do greške pri kreiranju vašeg korisničkog računa. Molimo vas da pokušate ponovo!',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText2,
+                                          ),
+                                          duration: const Duration(
+                                              milliseconds: 1500),
+                                        ),
+                                      );
                                     },
                                     child: Row(
                                       children: [
