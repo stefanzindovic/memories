@@ -129,7 +129,9 @@ class _SigninPageState extends State<SigninPage> {
                             .copyWith(fontSize: 12.sp),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/sign-up');
+                        },
                         child: Text(
                           'Registrujte se!',
                           style: TextStyle(fontSize: 12.sp),
