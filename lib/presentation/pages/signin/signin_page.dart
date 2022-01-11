@@ -32,6 +32,7 @@ class _SigninPageState extends State<SigninPage> {
       {required String email, required String password}) async {
     SigninStatus status = signinStatus;
     try {
+      SecureStorage.deleteUserCredentialFromStorage();
       UserCredential credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       await SecureStorage.saveUserCredentialsInStorage(credential);
