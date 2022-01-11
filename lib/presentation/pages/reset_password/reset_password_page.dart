@@ -4,6 +4,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:memories/theme/colors.dart';
+import 'package:memories/utils/user_authentication.dart';
 
 enum ResetPasswordStatus {
   initial,
@@ -29,7 +30,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     ResetPasswordStatus status = resetPasswordStatus;
 
     try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      await UserAuthentication.sendLinkForResetPassword(email);
       print('Sve je u redu');
       status = ResetPasswordStatus.success;
     } on FirebaseAuthException catch (e) {

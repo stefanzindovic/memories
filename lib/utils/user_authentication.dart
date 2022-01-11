@@ -16,6 +16,11 @@ class UserAuthentication {
     await SecureStorage.saveUserCredentialsInStorage(credential);
   }
 
+  static Future<void> sendLinkForResetPassword(String email) async {
+    await SecureStorage.deleteUserCredentialFromStorage();
+    await _auth.sendPasswordResetEmail(email: email);
+  }
+
   static Future<void> signoutUser() async {
     _auth.signOut();
     SecureStorage.deleteUserCredentialFromStorage();
