@@ -64,6 +64,16 @@ class _SigninPageState extends State<SigninPage> {
                               decoration: const InputDecoration(
                                 hintText: 'npr. markomarkovic@gmail.com',
                               ),
+                              validator: (value) {
+                                if (value!.length < 3 ||
+                                    value.length > 320 ||
+                                    !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                        .hasMatch(value)) {
+                                  return 'Unešena e-mail adresa je ne validna. Molimo vas da unesete e-mail adresu koja je validna. (ime@domen.com)';
+                                } else {
+                                  setState(() => _email = value);
+                                }
+                              },
                             ),
                             SizedBox(
                               height: 20.h,
@@ -82,6 +92,13 @@ class _SigninPageState extends State<SigninPage> {
                               decoration: const InputDecoration(
                                 hintText: 'koristite najmanje 8 karaktera...',
                               ),
+                              validator: (value) {
+                                if (value!.length < 8 || value.length > 24) {
+                                  return 'Unešena lozinka nije validna. Molimo vas da unesete lozinku koja je duža od 8 i krća od 24 karaktera.';
+                                } else {
+                                  setState(() => _password = value);
+                                }
+                              },
                             ),
                             SizedBox(
                               height: 20.h,
