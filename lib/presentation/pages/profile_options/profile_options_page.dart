@@ -32,7 +32,9 @@ class ProfileOptionsPage extends StatelessWidget {
                   height: 50.h,
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, '/edit-profile');
+                  },
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(

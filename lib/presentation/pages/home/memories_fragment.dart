@@ -19,7 +19,9 @@ class MemoriesFragment extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: 10.w),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/add-memory');
+              },
               icon: Icon(
                 FeatherIcons.plus,
                 size: 30.w,

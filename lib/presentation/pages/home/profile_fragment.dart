@@ -20,7 +20,9 @@ class ProfileFragment extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: 10.w),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/settings');
+              },
               icon: Icon(
                 FeatherIcons.settings,
                 size: 25.w,
