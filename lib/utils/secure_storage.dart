@@ -4,8 +4,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class SecureStorage {
   static const FlutterSecureStorage _storage = FlutterSecureStorage();
 
-  static Future<void> deleteUserCredentialFromStorage() {
-    throw UnimplementedError();
+  static Future<void> deleteUserCredentialFromStorage() async {
+    try {
+      await _storage.deleteAll();
+    } catch (e) {
+      print(e);
+    }
   }
 
   static Future<void> saveUserCredentialsInStorage(
