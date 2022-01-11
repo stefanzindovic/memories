@@ -3,6 +3,13 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/theme/colors.dart';
 
+enum SigninStatus {
+  initial,
+  loading,
+  success,
+  error,
+}
+
 class SigninPage extends StatefulWidget {
   const SigninPage({Key? key}) : super(key: key);
 
@@ -14,6 +21,9 @@ class _SigninPageState extends State<SigninPage> {
   final _formKey = GlobalKey<FormState>();
   String _email = '';
   String _password = '';
+  String? errirMessage;
+  SigninStatus signinStatus = SigninStatus.initial;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
