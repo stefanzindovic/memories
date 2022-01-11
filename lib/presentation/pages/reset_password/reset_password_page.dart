@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:memories/theme/colors.dart';
 
 enum ResetPasswordStatus {
   initial,
@@ -21,6 +24,30 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   String _email = '';
   String errorMessage = '';
   ResetPasswordStatus resetPasswordStatus = ResetPasswordStatus.initial;
+
+  Future<ResetPasswordStatus> _resetPassword({required String email}) async {
+    ResetPasswordStatus status = resetPasswordStatus;
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      print('Sve je u redu');
+      status = ResetPasswordStatus.success;
+    } on FirebaseAuthException catch (e) {
+      print(e);
+      if (e.code == 'user-not-found') {
+        errorMessage =
+            'Korisnik sa tom e-mail adresom ne postoji. Molimo vas da pokušate sa drugom e-mail adresom.';
+      }
+      status = ResetPasswordStatus.error;
+    } catch (e) {
+      print(e);
+      errorMessage =
+          'Došlo je do neočekivane greške pri izmjeni vaše lozinke. Molimo vas da pokušate ponovo.';
+      status = ResetPasswordStatus.error;
+    }
+
+    return status;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +92,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       height: 10.h,
                     ),
                     TextFormField(
+                      style: GoogleFonts.encodeSans(color: lightColor),
                       keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(
                         hintText: 'npr. markomarkovic@gmail.com',
@@ -90,25 +118,71 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                     child: const Text('Odustanite'),
                   ),
                   SizedBox(
                     width: 10.w,
                   ),
                   ElevatedButton(
-                    onPressed: () {},
-                    child: Row(
-                      children: [
-                        const Text('Dalje'),
-                        SizedBox(
-                          width: 5.w,
-                        ),
-                        const Icon(
-                          FeatherIcons.arrowRight,
-                        ),
-                      ],
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(110.w, 65.h),
                     ),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        setState(() =>
+                            resetPasswordStatus = ResetPasswordStatus.loading);
+                        ResetPasswordStatus result =
+                            await _resetPassword(email: _email);
+                        if (result == ResetPasswordStatus.success) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: backgroundColor,
+                              content: Text(
+                                'Link za izmjenu vaše lozinke je uspjesno poslat na vašu e-mail adresu. Molimo vas da provjerite vašu elektronsku poštu.',
+                                style: Theme.of(context).textTheme.bodyText2,
+                              ),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        } else if (result == ResetPasswordStatus.error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: backgroundColor,
+                              content: Text(
+                                errorMessage.toString(),
+                                style: Theme.of(context).textTheme.bodyText2,
+                              ),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                        setState(() =>
+                            resetPasswordStatus = ResetPasswordStatus.initial);
+                      }
+                    },
+                    child: (resetPasswordStatus == ResetPasswordStatus.loading)
+                        ? SizedBox(
+                            width: 24.w,
+                            height: 24.h,
+                            child: const CircularProgressIndicator(
+                                color: lightColor),
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text('Dalje'),
+                              SizedBox(
+                                width: 5.w,
+                              ),
+                              const Icon(
+                                FeatherIcons.arrowRight,
+                              ),
+                            ],
+                          ),
                   ),
                 ],
               ),

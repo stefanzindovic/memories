@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:memories/theme/colors.dart';
 
 enum SignupStatus { initial, loading, success, error }
@@ -90,7 +91,7 @@ class _SignupPageState extends State<SignupPage> {
                               height: 10.h,
                             ),
                             TextFormField(
-                              style: const TextStyle(color: lightColor),
+                              style: GoogleFonts.encodeSans(color: lightColor),
                               keyboardType: TextInputType.emailAddress,
                               decoration: const InputDecoration(
                                 hintText: 'npr. markomarkovic@gmail.com',
