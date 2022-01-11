@@ -26,7 +26,7 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
     LogoutStatus status = logoutStatus;
 
     try {
-      await UserAuthentication.signOutUser();
+      await UserAuthentication.signoutUser();
       print('Sve je u redu!');
       status = LogoutStatus.success;
     } catch (e) {
