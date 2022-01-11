@@ -149,7 +149,10 @@ class _SigninPageState extends State<SigninPage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                        context, '/reset-password');
+                                  },
                                   child: const Text('Zaboravili ste lozinku?'),
                                 ),
                                 SizedBox(
