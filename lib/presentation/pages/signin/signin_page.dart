@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:memories/theme/colors.dart';
 
 enum SigninStatus {
@@ -21,8 +23,36 @@ class _SigninPageState extends State<SigninPage> {
   final _formKey = GlobalKey<FormState>();
   String _email = '';
   String _password = '';
-  String? errirMessage;
+  String? errorMessage;
   SigninStatus signinStatus = SigninStatus.initial;
+
+  Future<SigninStatus> _loginUser(
+      {required String email, required String password}) async {
+    SigninStatus status = signinStatus;
+    try {
+      UserCredential credentials = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      print('Sve je u redu!');
+      status = SigninStatus.success;
+    } on FirebaseAuthException catch (e) {
+      print(e);
+      if (e.code == 'user-not-found') {
+        errorMessage =
+            'Korisnik sa tom e-mail adresom ne postoji. Molimo vas da pokušate sa drugom e-mail adresom ili da kreirate novi korisniški račun.';
+      } else if (e.code == 'wrong-password') {
+        errorMessage =
+            'Navedeni podaci za prijavljivanje se ne poklapaju. Molimo vas da pokušate ponovo.';
+      }
+      status = SigninStatus.error;
+    } catch (e) {
+      print(e);
+      errorMessage =
+          'Došlo je do neočekivane greške pri prijavljivanju na vaš korisnički račun. Molimo vas da pokušate ponovo malo kasnije.';
+      status = SigninStatus.error;
+    }
+
+    return status;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +90,7 @@ class _SigninPageState extends State<SigninPage> {
                         height: 20.h,
                       ),
                       Form(
+                        key: _formKey,
                         child: Column(
                           children: [
                             const Align(
@@ -70,6 +101,7 @@ class _SigninPageState extends State<SigninPage> {
                               height: 10.h,
                             ),
                             TextFormField(
+                              style: GoogleFonts.encodeSans(color: lightColor),
                               keyboardType: TextInputType.emailAddress,
                               decoration: const InputDecoration(
                                 hintText: 'npr. markomarkovic@gmail.com',
@@ -124,18 +156,56 @@ class _SigninPageState extends State<SigninPage> {
                                   width: 10.h,
                                 ),
                                 ElevatedButton(
-                                  onPressed: () {},
-                                  child: Row(
-                                    children: [
-                                      const Text('Prijavite se'),
-                                      SizedBox(
-                                        width: 5.w,
-                                      ),
-                                      const Icon(
-                                        FeatherIcons.arrowRight,
-                                      ),
-                                    ],
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: Size(150.w, 65.h),
                                   ),
+                                  onPressed: () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      setState(() =>
+                                          signinStatus = SigninStatus.loading);
+                                      SigninStatus result = await _loginUser(
+                                          email: _email, password: _password);
+                                      if (result == SigninStatus.error) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            backgroundColor: backgroundColor,
+                                            content: Text(
+                                              errorMessage.toString(),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText2,
+                                            ),
+                                          ),
+                                        );
+                                      } else if (result ==
+                                          SigninStatus.success) {
+                                        Navigator.pushNamedAndRemoveUntil(
+                                            context, '/', (route) => false);
+                                      }
+                                      setState(() =>
+                                          signinStatus = SigninStatus.initial);
+                                    }
+                                  },
+                                  child: (signinStatus == SigninStatus.loading)
+                                      ? SizedBox(
+                                          width: 24.w,
+                                          height: 24.h,
+                                          child:
+                                              const CircularProgressIndicator(
+                                                  color: lightColor),
+                                        )
+                                      : Row(
+                                          children: [
+                                            const Text('Prijavite se'),
+                                            SizedBox(
+                                              width: 5.w,
+                                            ),
+                                            const Icon(
+                                              FeatherIcons.arrowRight,
+                                            ),
+                                          ],
+                                        ),
                                 ),
                               ],
                             ),
