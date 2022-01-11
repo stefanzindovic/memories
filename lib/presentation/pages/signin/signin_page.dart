@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:memories/theme/colors.dart';
+import 'package:memories/utils/secure_storage.dart';
 
 enum SigninStatus {
   initial,
@@ -30,8 +32,9 @@ class _SigninPageState extends State<SigninPage> {
       {required String email, required String password}) async {
     SigninStatus status = signinStatus;
     try {
-      UserCredential credentials = await FirebaseAuth.instance
+      UserCredential credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+      await SecureStorage.saveUserCredentialsInStorage(credential);
       print('Sve je u redu!');
       status = SigninStatus.success;
     } on FirebaseAuthException catch (e) {
