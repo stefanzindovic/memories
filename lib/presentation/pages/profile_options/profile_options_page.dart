@@ -2,9 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/theme/colors.dart';
+import 'package:memories/utils/user_authentication.dart';
 
-class ProfileOptionsPage extends StatelessWidget {
+enum LogoutStatus {
+  initial,
+  loading,
+  success,
+  error,
+}
+
+class ProfileOptionsPage extends StatefulWidget {
   const ProfileOptionsPage({Key? key}) : super(key: key);
+
+  @override
+  _ProfileOptionsPageState createState() => _ProfileOptionsPageState();
+}
+
+class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
+  LogoutStatus logoutStatus = LogoutStatus.initial;
+  String? errorMessage;
+
+  Future<LogoutStatus> logoutUser() async {
+    LogoutStatus status = logoutStatus;
+
+    try {
+      await UserAuthentication.signOutUser();
+      print('Sve je u redu!');
+      status = LogoutStatus.success;
+    } catch (e) {
+      print(e);
+      errorMessage =
+          'Došlo je do neočekivane greške pri odjavljivanju sa vašeg korisničkog računa. Molimo vas da pokušate ponovo kasnije.';
+      status = LogoutStatus.error;
+    }
+    return status;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +105,7 @@ class ProfileOptionsPage extends StatelessWidget {
                   height: 20.h,
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () async {},
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -112,7 +144,34 @@ class ProfileOptionsPage extends StatelessWidget {
                   height: 20.h,
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () async {
+                    setState(() => logoutStatus = LogoutStatus.loading);
+                    LogoutStatus result = await logoutUser();
+                    if (result == LogoutStatus.error) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: backgroundColor,
+                          content: Text(
+                            errorMessage.toString(),
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                        ),
+                      );
+                    } else if (result == LogoutStatus.success) {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/sign-in', (route) => false);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: backgroundColor,
+                          content: Text(
+                            'Uspješno ste se odjavili sa vašeg korisničkog računa!',
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                        ),
+                      );
+                    }
+                    setState(() => logoutStatus = LogoutStatus.initial);
+                  },
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -141,7 +200,15 @@ class ProfileOptionsPage extends StatelessWidget {
                               Text('Odjavite se'),
                             ],
                           ),
-                          const Icon(FeatherIcons.arrowRight),
+                          (logoutStatus == LogoutStatus.loading)
+                              ? SizedBox(
+                                  width: 24.w,
+                                  height: 24.h,
+                                  child: CircularProgressIndicator(
+                                    color: textColor,
+                                  ),
+                                )
+                              : const Icon(FeatherIcons.arrowRight),
                         ],
                       ),
                     ),
