@@ -17,6 +17,11 @@ class ResetPasswordPage extends StatefulWidget {
 }
 
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
+  final _formKey = GlobalKey<FormState>();
+  String _email = '';
+  String errorMessage = '';
+  ResetPasswordStatus resetPasswordStatus = ResetPasswordStatus.initial;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
