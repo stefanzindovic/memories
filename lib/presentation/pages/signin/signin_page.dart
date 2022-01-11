@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:memories/theme/colors.dart';
 import 'package:memories/utils/secure_storage.dart';
+import 'package:memories/utils/user_authentication.dart';
 
 enum SigninStatus {
   initial,
@@ -33,9 +34,7 @@ class _SigninPageState extends State<SigninPage> {
     SigninStatus status = signinStatus;
     try {
       SecureStorage.deleteUserCredentialFromStorage();
-      UserCredential credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-      await SecureStorage.saveUserCredentialsInStorage(credential);
+      await UserAuthentication.signinUser(email, password);
       print('Sve je u redu!');
       status = SigninStatus.success;
     } on FirebaseAuthException catch (e) {
