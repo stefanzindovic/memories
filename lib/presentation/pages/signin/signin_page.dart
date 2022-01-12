@@ -45,6 +45,9 @@ class _SigninPageState extends State<SigninPage> {
       } else if (e.code == 'wrong-password') {
         errorMessage =
             'Navedeni podaci za prijavljivanje se ne poklapaju. Molimo vas da pokušate ponovo.';
+      } else if (e.code == 'network-request-failed') {
+        errorMessage =
+            'Internet konekcija nije ostvarena. Molimo vas da provjerite vašu internet vezu i pokušajte ponovo.';
       }
       status = SigninStatus.error;
     } catch (e) {

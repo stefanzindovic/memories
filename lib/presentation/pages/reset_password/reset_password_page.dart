@@ -38,6 +38,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       if (e.code == 'user-not-found') {
         errorMessage =
             'Korisnik sa tom e-mail adresom ne postoji. Molimo vas da pokušate sa drugom e-mail adresom.';
+      } else if (e.code == 'network-request-failed') {
+        errorMessage =
+            'Internet konekcija nije ostvarena. Molimo vas da provjerite vašu internet vezu i pokušajte ponovo.';
       }
       status = ResetPasswordStatus.error;
     } catch (e) {

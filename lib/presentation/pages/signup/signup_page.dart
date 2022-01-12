@@ -35,6 +35,9 @@ class _SignupPageState extends State<SignupPage> {
       if (e.code == 'email-already-in-use') {
         errorMessage =
             'Željena e-mail adresa je već u upotrebi. Molimo vas da pokušate ponovo sa nekom drugom e-mail adresom.';
+      } else if (e.code == 'network-request-failed') {
+        errorMessage =
+            'Internet konekcija nije ostvarena. Molimo vas da provjerite vašu internet vezu i pokušajte ponovo.';
       }
       status = SignupStatus.error;
     } catch (e) {
