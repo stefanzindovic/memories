@@ -33,7 +33,7 @@ class _SigninPageState extends State<SigninPage> {
       {required String email, required String password}) async {
     SigninStatus status = signinStatus;
     try {
-      SecureStorage.deleteUserCredentialFromStorage();
+      await SecureStorage.deleteUserCredentialFromStorage();
       await UserAuthentication.signinUser(email, password);
       print('Sve je u redu!');
       status = SigninStatus.success;

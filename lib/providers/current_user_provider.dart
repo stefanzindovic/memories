@@ -1,12 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:memories/utils/secure_storage.dart';
 
-class CurrentUserProvider with ChangeNotifier {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  User? currentUser;
+class CurrentUserProvider extends ChangeNotifier {
+  String? _uid;
+  String? _credentials;
 
-  Stream<User?> get user => _auth.authStateChanges().map((User? firebaseUser) {
-        currentUser = firebaseUser;
-        notifyListeners();
-      });
+  String? get uid => _uid;
+  String? get credentials => _credentials;
+
+  void setUid() async {
+    _uid = await SecureStorage.getUserUidFromStorage();
+    notifyListeners();
+  }
+
+  void setCredentials() async {
+    _credentials = await SecureStorage.getUserCredentialsFromStorage();
+    notifyListeners();
+  }
 }
