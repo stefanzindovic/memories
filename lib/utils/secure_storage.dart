@@ -21,4 +21,20 @@ class SecureStorage {
       print(e);
     }
   }
+
+  static Future<String?> getUserUidFromStorage() async {
+    try {
+      return await _storage.read(key: 'uid');
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static Future<String?> getUserCredentialsFromStorage() async {
+    try {
+      return await _storage.read(key: 'user');
+    } catch (e) {
+      print(e);
+    }
+  }
 }
