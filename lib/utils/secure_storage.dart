@@ -16,7 +16,8 @@ class SecureStorage {
       UserCredential credential) async {
     try {
       await _storage.write(key: 'uid', value: credential.user!.uid);
-      await _storage.write(key: 'user', value: credential.toString());
+      await _storage.write(
+          key: 'email', value: credential.user!.email.toString());
     } catch (e) {
       print(e);
     }
@@ -32,7 +33,7 @@ class SecureStorage {
 
   static Future<String?> getUserCredentialsFromStorage() async {
     try {
-      return await _storage.read(key: 'user');
+      return await _storage.read(key: 'email');
     } catch (e) {
       print(e);
     }

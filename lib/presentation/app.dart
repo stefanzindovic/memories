@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Provider.of<CurrentUserProvider>(context, listen: false).setUid();
+    Provider.of<CurrentUserProvider>(context, listen: false).setCredentials();
     return ScreenUtilInit(
       designSize: const Size(360, 800),
       builder: () => MaterialApp(

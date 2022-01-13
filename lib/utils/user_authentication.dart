@@ -22,7 +22,7 @@ class UserAuthentication {
   }
 
   static Future<void> signoutUser() async {
-    _auth.signOut();
-    SecureStorage.deleteUserCredentialFromStorage();
+    await _auth.signOut();
+    await SecureStorage.deleteUserCredentialFromStorage();
   }
 }

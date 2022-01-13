@@ -1,10 +1,21 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:memories/providers/current_user_provider.dart';
 import 'package:memories/theme/colors.dart';
+import 'package:memories/utils/secure_storage.dart';
 import 'package:memories/utils/user_authentication.dart';
+import 'package:provider/provider.dart';
 
 enum LogoutStatus {
+  initial,
+  loading,
+  success,
+  error,
+}
+
+enum ResetPasswordStatus {
   initial,
   loading,
   success,
@@ -20,6 +31,7 @@ class ProfileOptionsPage extends StatefulWidget {
 
 class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
   LogoutStatus logoutStatus = LogoutStatus.initial;
+  ResetPasswordStatus resetPasswordStatus = ResetPasswordStatus.initial;
   String? errorMessage;
 
   Future<LogoutStatus> logoutUser() async {
@@ -35,6 +47,36 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
           'Došlo je do neočekivane greške pri odjavljivanju sa vašeg korisničkog računa. Molimo vas da pokušate ponovo kasnije.';
       status = LogoutStatus.error;
     }
+    return status;
+  }
+
+  Future<ResetPasswordStatus> _resetPassword() async {
+    ResetPasswordStatus status = resetPasswordStatus;
+    try {
+      String email = Provider.of<CurrentUserProvider>(context, listen: false)
+          .credentials
+          .toString();
+      await UserAuthentication.sendLinkForResetPassword(email);
+      await UserAuthentication.signoutUser();
+      print('Sve je u redu!');
+      status = ResetPasswordStatus.success;
+    } on FirebaseAuthException catch (e) {
+      print(e);
+      if (e.code == 'user-not-found') {
+        errorMessage =
+            'Korisnik sa tom e-mail adresom ne postoji. Molimo vas da pokušate sa drugom e-mail adresom.';
+      } else if (e.code == 'network-request-failed') {
+        errorMessage =
+            'Internet konekcija nije ostvarena. Molimo vas da provjerite vašu internet vezu i pokušajte ponovo.';
+      }
+      status = ResetPasswordStatus.error;
+    } catch (e) {
+      print(e);
+      errorMessage =
+          'Došlo je do neočekivane greške pri izmjeni vaše lozinke. Molimo vas da pokušate ponovo.';
+      status = ResetPasswordStatus.error;
+    }
+
     return status;
   }
 
@@ -105,7 +147,38 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
                   height: 20.h,
                 ),
                 GestureDetector(
-                  onTap: () async {},
+                  onTap: () async {
+                    setState(() =>
+                        resetPasswordStatus = ResetPasswordStatus.loading);
+                    ResetPasswordStatus result = await _resetPassword();
+                    if (result == ResetPasswordStatus.success) {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/sign-in', (route) => false);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: backgroundColor,
+                          content: Text(
+                            'Link za izmjenu vaše lozinke je uspjesno poslat na vašu e-mail adresu. Molimo vas da provjerite vašu elektronsku poštu.',
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    } else if (result == ResetPasswordStatus.error) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: backgroundColor,
+                          content: Text(
+                            errorMessage.toString(),
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                    setState(() =>
+                        resetPasswordStatus = ResetPasswordStatus.initial);
+                  },
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -134,7 +207,14 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
                               Text('Izmijenite lozinku'),
                             ],
                           ),
-                          const Icon(FeatherIcons.arrowRight),
+                          (resetPasswordStatus == ResetPasswordStatus.loading)
+                              ? SizedBox(
+                                  width: 24.w,
+                                  height: 24.h,
+                                  child: const CircularProgressIndicator(
+                                      color: lightColor),
+                                )
+                              : const Icon(FeatherIcons.arrowRight),
                         ],
                       ),
                     ),
