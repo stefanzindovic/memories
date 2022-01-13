@@ -1,7 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:memories/providers/current_user_provider.dart';
 import 'package:memories/theme/colors.dart';
+import 'package:memories/repository/secure_storage.dart';
+import 'package:memories/repository/user_authentication.dart';
+import 'package:provider/provider.dart';
+
+enum SignupStatus { initial, loading, success, error }
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -11,6 +19,41 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  final _formKey = GlobalKey<FormState>();
+  String _email = '';
+  String _password = '';
+  String? errorMessage;
+  SignupStatus signupStatus = SignupStatus.initial;
+
+  Future<SignupStatus> signupUser(
+      {required String email, required String password}) async {
+    SignupStatus status = signupStatus;
+    try {
+      await SecureStorage.deleteUserCredentialFromStorage();
+      await UserAuthentication.signupUser(email, password);
+      Provider.of<CurrentUserProvider>(context, listen: false).setUid();
+      Provider.of<CurrentUserProvider>(context, listen: false).setCredentials();
+      status = SignupStatus.success;
+    } on FirebaseAuthException catch (e) {
+      print(e);
+      if (e.code == 'email-already-in-use') {
+        errorMessage =
+            'Željena e-mail adresa je već u upotrebi. Molimo vas da pokušate ponovo sa nekom drugom e-mail adresom.';
+      } else if (e.code == 'network-request-failed') {
+        errorMessage =
+            'Internet konekcija nije ostvarena. Molimo vas da provjerite vašu internet vezu i pokušajte ponovo.';
+      }
+      status = SignupStatus.error;
+    } catch (e) {
+      print(e);
+      errorMessage =
+          'Došlo je do greške pri kreiranju vašeg korisničkog računa. Molimo vas da pokušate ponovo malo kasnije.';
+      status = SignupStatus.error;
+    }
+
+    return status;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +89,7 @@ class _SignupPageState extends State<SignupPage> {
                         height: 20.h,
                       ),
                       Form(
+                        key: _formKey,
                         child: Column(
                           children: [
                             const Align(
@@ -56,10 +100,21 @@ class _SignupPageState extends State<SignupPage> {
                               height: 10.h,
                             ),
                             TextFormField(
+                              style: GoogleFonts.encodeSans(color: lightColor),
                               keyboardType: TextInputType.emailAddress,
                               decoration: const InputDecoration(
                                 hintText: 'npr. markomarkovic@gmail.com',
                               ),
+                              validator: (value) {
+                                if (value!.length < 3 ||
+                                    value.length > 320 ||
+                                    !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                        .hasMatch(value)) {
+                                  return 'Unešena e-mail adresa je ne validna. Molimo vas da unesete e-mail adresu koja je validna. (ime@domen.com)';
+                                } else {
+                                  setState(() => _email = value);
+                                }
+                              },
                             ),
                             SizedBox(
                               height: 20.h,
@@ -78,6 +133,13 @@ class _SignupPageState extends State<SignupPage> {
                               decoration: const InputDecoration(
                                 hintText: 'koristite najmanje 8 karaktera...',
                               ),
+                              validator: (value) {
+                                if (value!.length < 8 || value.length > 24) {
+                                  return 'Unešena lozinka nije validna. Molimo vas da unesete lozinku koja je duža od 8 i krća od 24 karaktera.';
+                                } else {
+                                  setState(() => _password = value);
+                                }
+                              },
                             ),
                             SizedBox(
                               height: 20.h,
@@ -87,18 +149,64 @@ class _SignupPageState extends State<SignupPage> {
                               children: [
                                 Align(
                                   child: ElevatedButton(
-                                    onPressed: () {},
-                                    child: Row(
-                                      children: [
-                                        const Text('Registrujte se'),
-                                        SizedBox(
-                                          width: 5.w,
-                                        ),
-                                        const Icon(
-                                          FeatherIcons.arrowRight,
-                                        ),
-                                      ],
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: Size(170.w, 65.h),
                                     ),
+                                    onPressed: () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        setState(() => signupStatus =
+                                            SignupStatus.loading);
+                                        SignupStatus result = await signupUser(
+                                            email: _email, password: _password);
+                                        if (result == SignupStatus.success) {
+                                          print("Sve je u redu");
+                                          Navigator.pushNamedAndRemoveUntil(
+                                              context,
+                                              '/more-info',
+                                              (route) => false);
+                                        } else if (result ==
+                                            SignupStatus.error) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              backgroundColor: backgroundColor,
+                                              content: Text(
+                                                errorMessage.toString(),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText2,
+                                              ),
+                                              duration:
+                                                  const Duration(seconds: 2),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                      setState(() =>
+                                          signupStatus = SignupStatus.initial);
+                                    },
+                                    child:
+                                        (signupStatus == SignupStatus.initial)
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  const Text('Registrujte se'),
+                                                  SizedBox(
+                                                    width: 5.w,
+                                                  ),
+                                                  const Icon(
+                                                    FeatherIcons.arrowRight,
+                                                  ),
+                                                ],
+                                              )
+                                            : SizedBox(
+                                                width: 24.w,
+                                                height: 24.h,
+                                                child:
+                                                    const CircularProgressIndicator(
+                                                        color: lightColor),
+                                              ),
                                   ),
                                 ),
                               ],
@@ -120,7 +228,9 @@ class _SignupPageState extends State<SignupPage> {
                             .copyWith(fontSize: 12.sp),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/sign-in');
+                        },
                         child: Text(
                           'Prijavite se!',
                           style: TextStyle(fontSize: 12.sp),
