@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:memories/providers/current_user_provider.dart';
 import 'package:memories/theme/colors.dart';
-import 'package:memories/utils/secure_storage.dart';
-import 'package:memories/utils/user_authentication.dart';
+import 'package:memories/repository/secure_storage.dart';
+import 'package:memories/repository/user_authentication.dart';
+import 'package:provider/provider.dart';
 
 enum SignupStatus { initial, loading, success, error }
 
@@ -29,6 +31,8 @@ class _SignupPageState extends State<SignupPage> {
     try {
       await SecureStorage.deleteUserCredentialFromStorage();
       await UserAuthentication.signupUser(email, password);
+      Provider.of<CurrentUserProvider>(context, listen: false).setUid();
+      Provider.of<CurrentUserProvider>(context, listen: false).setCredentials();
       status = SignupStatus.success;
     } on FirebaseAuthException catch (e) {
       print(e);

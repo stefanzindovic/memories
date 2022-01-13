@@ -10,6 +10,7 @@ class AuthenticationWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String? _uid = Provider.of<CurrentUserProvider>(context).uid;
+    print(_uid);
     if (_uid == null) {
       return const SigninPage();
     } else {

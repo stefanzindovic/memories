@@ -4,8 +4,8 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/providers/current_user_provider.dart';
 import 'package:memories/theme/colors.dart';
-import 'package:memories/utils/secure_storage.dart';
-import 'package:memories/utils/user_authentication.dart';
+import 'package:memories/repository/secure_storage.dart';
+import 'package:memories/repository/user_authentication.dart';
 import 'package:provider/provider.dart';
 
 enum LogoutStatus {
@@ -34,7 +34,7 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
   ResetPasswordStatus resetPasswordStatus = ResetPasswordStatus.initial;
   String? errorMessage;
 
-  Future<LogoutStatus> logoutUser() async {
+  Future<LogoutStatus> _logoutUser() async {
     LogoutStatus status = logoutStatus;
 
     try {
@@ -226,7 +226,7 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
                 GestureDetector(
                   onTap: () async {
                     setState(() => logoutStatus = LogoutStatus.loading);
-                    LogoutStatus result = await logoutUser();
+                    LogoutStatus result = await _logoutUser();
                     if (result == LogoutStatus.error) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

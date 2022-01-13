@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:memories/utils/secure_storage.dart';
+import 'package:memories/repository/secure_storage.dart';
 
 class UserAuthentication {
   static final _auth = FirebaseAuth.instance;
@@ -22,7 +22,7 @@ class UserAuthentication {
   }
 
   static Future<void> signoutUser() async {
-    await _auth.signOut();
     await SecureStorage.deleteUserCredentialFromStorage();
+    await _auth.signOut();
   }
 }
