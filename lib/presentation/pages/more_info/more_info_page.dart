@@ -192,6 +192,9 @@ class _MoreInfoPageState extends State<MoreInfoPage> {
                   children: [
                     Align(
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(150.w, 65.h),
+                        ),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             setState(() => saveUserInfoStatus =
