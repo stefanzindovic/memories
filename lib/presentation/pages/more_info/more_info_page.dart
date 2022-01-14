@@ -192,17 +192,25 @@ class _MoreInfoPageState extends State<MoreInfoPage> {
                           setState(() =>
                               saveUserInfoStatus = SaveUserInfoStatus.initial);
                         },
-                        child: Row(
-                          children: [
-                            const Text('Sačuvajte'),
-                            SizedBox(
-                              width: 5.w,
-                            ),
-                            const Icon(
-                              FeatherIcons.arrowRight,
-                            ),
-                          ],
-                        ),
+                        child:
+                            (saveUserInfoStatus == SaveUserInfoStatus.loading)
+                                ? SizedBox(
+                                    width: 24.w,
+                                    height: 24.h,
+                                    child: const CircularProgressIndicator(
+                                        color: lightColor),
+                                  )
+                                : Row(
+                                    children: [
+                                      const Text('Sačuvajte'),
+                                      SizedBox(
+                                        width: 5.w,
+                                      ),
+                                      const Icon(
+                                        FeatherIcons.arrowRight,
+                                      ),
+                                    ],
+                                  ),
                       ),
                     ),
                   ],
