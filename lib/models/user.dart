@@ -12,4 +12,10 @@ class UserModel {
     required this.name,
     this.profilePhotoUrl,
   });
+
+  Map<String, dynamic> toJson() => {
+        'uid': uid,
+        'name': name,
+        'profilePhotoUrl': profilePhotoUrl,
+      };
 }

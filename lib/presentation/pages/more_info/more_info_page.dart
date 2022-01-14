@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:memories/models/user.dart';
 import 'package:memories/repository/user_informations.dart';
 import 'package:memories/theme/colors.dart';
 
@@ -28,9 +29,11 @@ class _MoreInfoPageState extends State<MoreInfoPage> {
 
   Future<SaveUserInfoStatus> _saveUserInfo() async {
     SaveUserInfoStatus status = saveUserInfoStatus;
+    final UserModel user =
+        UserModel(uid: 'test1', name: 'Stefan Zindović', profilePhotoUrl: null);
 
     try {
-      await UserInformations.insertUserInfo();
+      await UserInformations.insertUserInfo(user);
       print('Sve je u redu!');
       status = SaveUserInfoStatus.success;
     } catch (e) {
