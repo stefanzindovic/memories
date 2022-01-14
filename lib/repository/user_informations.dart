@@ -6,8 +6,9 @@ class UserInformations {
       FirebaseFirestore.instance.collection('users');
 
   Future<void> insertUserInfo() async {
-    await _collection
-        .doc('test')
-        .set({'name': 'Stefan Zindović', "profile_picture_url": null});
+    await _collection.doc('test').set({
+      'name': 'Stefan Zindović',
+      "profile_picture_url": null,
+    });
   }
 }

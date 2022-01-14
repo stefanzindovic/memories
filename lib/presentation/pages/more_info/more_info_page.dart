@@ -3,8 +3,17 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/theme/colors.dart';
 
-class MoreInfoPage extends StatelessWidget {
+class MoreInfoPage extends StatefulWidget {
   const MoreInfoPage({Key? key}) : super(key: key);
+
+  @override
+  _MoreInfoPageState createState() => _MoreInfoPageState();
+}
+
+class _MoreInfoPageState extends State<MoreInfoPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _profilePhoto = '';
+  final _name = '';
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +118,7 @@ class MoreInfoPage extends StatelessWidget {
                   height: 20.h,
                 ),
                 Form(
+                  key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
