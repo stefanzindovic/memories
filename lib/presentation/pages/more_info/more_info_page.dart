@@ -2,9 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:memories/models/user.dart';
+import 'package:memories/providers/current_user_provider.dart';
 import 'package:memories/repository/user_informations.dart';
 import 'package:memories/theme/colors.dart';
+import 'package:provider/provider.dart';
 
 enum SaveUserInfoStatus {
   initial,
@@ -22,15 +25,20 @@ class MoreInfoPage extends StatefulWidget {
 
 class _MoreInfoPageState extends State<MoreInfoPage> {
   final _formKey = GlobalKey<FormState>();
-  String _profilePhoto = '';
-  String? _name;
+  String? _profilePhoto;
+  String _name = '';
   String? errorMessage;
   SaveUserInfoStatus saveUserInfoStatus = SaveUserInfoStatus.initial;
 
   Future<SaveUserInfoStatus> _saveUserInfo() async {
     SaveUserInfoStatus status = saveUserInfoStatus;
-    final UserModel user =
-        UserModel(uid: 'test1', name: 'Stefan Zindović', profilePhotoUrl: null);
+    final UserModel user = UserModel(
+      uid: Provider.of<CurrentUserProvider>(context, listen: false)
+          .uid
+          .toString(),
+      name: _name,
+      profilePhotoUrl: null,
+    );
 
     try {
       await UserInformations.insertUserInfo(user);
@@ -158,10 +166,20 @@ class _MoreInfoPageState extends State<MoreInfoPage> {
                         height: 10.h,
                       ),
                       TextFormField(
+                        style: GoogleFonts.encodeSans(color: lightColor),
                         textCapitalization: TextCapitalization.words,
                         decoration: const InputDecoration(
                           hintText: 'npr. Marko Marković',
                         ),
+                        validator: (value) {
+                          if (value!.length < 5 ||
+                              value.length > 50 ||
+                              !RegExp(r"^[a-žA-Ž\s]").hasMatch(value)) {
+                            return 'Vaše ime mora sadržati najmanje 5 karaktera i najviše 50 karaktera. Takođe vaše ime može sadržati samo slova.';
+                          } else {
+                            setState(() => _name = value);
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -175,25 +193,28 @@ class _MoreInfoPageState extends State<MoreInfoPage> {
                     Align(
                       child: ElevatedButton(
                         onPressed: () async {
-                          setState(() =>
-                              saveUserInfoStatus = SaveUserInfoStatus.loading);
-                          SaveUserInfoStatus result = await _saveUserInfo();
-                          if (result == SaveUserInfoStatus.success) {
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, '/', (route) => false);
-                          } else if (result == SaveUserInfoStatus.error) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: backgroundColor,
-                                content: Text(
-                                  errorMessage.toString(),
-                                  style: Theme.of(context).textTheme.bodyText2,
+                          if (_formKey.currentState!.validate()) {
+                            setState(() => saveUserInfoStatus =
+                                SaveUserInfoStatus.loading);
+                            SaveUserInfoStatus result = await _saveUserInfo();
+                            if (result == SaveUserInfoStatus.success) {
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context, '/', (route) => false);
+                            } else if (result == SaveUserInfoStatus.error) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: backgroundColor,
+                                  content: Text(
+                                    errorMessage.toString(),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText2,
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            }
+                            setState(() => saveUserInfoStatus =
+                                SaveUserInfoStatus.initial);
                           }
-                          setState(() =>
-                              saveUserInfoStatus = SaveUserInfoStatus.initial);
                         },
                         child:
                             (saveUserInfoStatus == SaveUserInfoStatus.loading)
