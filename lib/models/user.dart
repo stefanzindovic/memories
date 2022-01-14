@@ -18,4 +18,9 @@ class UserModel {
         'name': name,
         'profilePhotoUrl': profilePhotoUrl,
       };
+
+  UserModel.fromJson(DocumentSnapshot data)
+      : uid = data['uid'],
+        name = data['name'],
+        profilePhotoUrl = data['profilePhotoUrl'];
 }
