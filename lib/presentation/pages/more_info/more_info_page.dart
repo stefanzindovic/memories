@@ -1,7 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:memories/repository/user_informations.dart';
 import 'package:memories/theme/colors.dart';
+
+enum SaveUserInfoStatus {
+  initial,
+  success,
+  error,
+  loading,
+}
 
 class MoreInfoPage extends StatefulWidget {
   const MoreInfoPage({Key? key}) : super(key: key);
@@ -12,8 +21,27 @@ class MoreInfoPage extends StatefulWidget {
 
 class _MoreInfoPageState extends State<MoreInfoPage> {
   final _formKey = GlobalKey<FormState>();
-  final _profilePhoto = '';
-  final _name = '';
+  String _profilePhoto = '';
+  String _name = '';
+  String? errorMessage;
+  SaveUserInfoStatus saveUserInfoStatus = SaveUserInfoStatus.initial;
+
+  Future<SaveUserInfoStatus> _saveUserInfo() async {
+    SaveUserInfoStatus status = saveUserInfoStatus;
+
+    try {
+      await UserInformations.insertUserInfo();
+      print('Sve je u redu!');
+      status = SaveUserInfoStatus.success;
+    } catch (e) {
+      print(e);
+      status = SaveUserInfoStatus.error;
+      errorMessage =
+          'Došlo je do neočekivane greške pri čuvanju vaših ličnih podataka. Molimo vas da pokušate ponovo.';
+    }
+
+    return status;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +171,27 @@ class _MoreInfoPageState extends State<MoreInfoPage> {
                   children: [
                     Align(
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          setState(() =>
+                              saveUserInfoStatus = SaveUserInfoStatus.loading);
+                          SaveUserInfoStatus result = await _saveUserInfo();
+                          if (result == SaveUserInfoStatus.success) {
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, '/', (route) => false);
+                          } else if (result == SaveUserInfoStatus.error) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: backgroundColor,
+                                content: Text(
+                                  errorMessage.toString(),
+                                  style: Theme.of(context).textTheme.bodyText2,
+                                ),
+                              ),
+                            );
+                          }
+                          setState(() =>
+                              saveUserInfoStatus = SaveUserInfoStatus.initial);
+                        },
                         child: Row(
                           children: [
                             const Text('Sačuvajte'),
