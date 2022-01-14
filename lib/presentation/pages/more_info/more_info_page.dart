@@ -23,7 +23,7 @@ class MoreInfoPage extends StatefulWidget {
 class _MoreInfoPageState extends State<MoreInfoPage> {
   final _formKey = GlobalKey<FormState>();
   String _profilePhoto = '';
-  String _name = '';
+  String? _name;
   String? errorMessage;
   SaveUserInfoStatus saveUserInfoStatus = SaveUserInfoStatus.initial;
 
