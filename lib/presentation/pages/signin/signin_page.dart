@@ -36,8 +36,9 @@ class _SigninPageState extends State<SigninPage> {
     try {
       await SecureStorage.deleteUserCredentialFromStorage();
       await UserAuthentication.signinUser(email, password);
-      Provider.of<CurrentUserProvider>(context, listen: false).setUid();
-      Provider.of<CurrentUserProvider>(context, listen: false).setCredentials();
+      await Provider.of<CurrentUserProvider>(context, listen: false).setUid();
+      await Provider.of<CurrentUserProvider>(context, listen: false)
+          .setCredentials();
       print('Sve je u redu!');
       status = SigninStatus.success;
     } on FirebaseAuthException catch (e) {
