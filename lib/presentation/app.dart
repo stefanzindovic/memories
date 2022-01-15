@@ -13,8 +13,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     Provider.of<CurrentUserProvider>(context, listen: false).setUid();
     Provider.of<CurrentUserProvider>(context, listen: false).setCredentials();
-
-    // print(Provider.of<CurrentUserProvider>(context).uid);
     return ScreenUtilInit(
       designSize: const Size(360, 800),
       builder: () => MaterialApp(
