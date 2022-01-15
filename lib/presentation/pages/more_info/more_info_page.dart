@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:memories/models/user.dart';
 import 'package:memories/providers/current_user_provider.dart';
 import 'package:memories/repository/user_informations.dart';
@@ -25,22 +28,42 @@ class MoreInfoPage extends StatefulWidget {
 
 class _MoreInfoPageState extends State<MoreInfoPage> {
   final _formKey = GlobalKey<FormState>();
-  String? _profilePhoto;
   String _name = '';
   String? errorMessage;
   SaveUserInfoStatus saveUserInfoStatus = SaveUserInfoStatus.initial;
+  File? _profilePhoto;
+
+  Future getImageFromGallery() async {
+    ImagePicker _picker = ImagePicker();
+    XFile? file = await _picker.pickImage(source: ImageSource.gallery);
+    if (file != null) {
+      setState(() => _profilePhoto = File(file.path));
+    }
+  }
+
+  Future getImageFromCamera() async {
+    ImagePicker _picker = ImagePicker();
+    XFile? file = await _picker.pickImage(source: ImageSource.camera);
+    if (file != null) {
+      setState(() => _profilePhoto = File(file.path));
+    }
+  }
 
   Future<SaveUserInfoStatus> _saveUserInfo() async {
     SaveUserInfoStatus status = saveUserInfoStatus;
-    final UserModel user = UserModel(
-      uid: Provider.of<CurrentUserProvider>(context, listen: false)
-          .uid
-          .toString(),
-      name: _name,
-      profilePhotoUrl: null,
-    );
-
+    String? _profilePhotoUrl;
+    String _uid =
+        Provider.of<CurrentUserProvider>(context, listen: false).uid.toString();
     try {
+      if (_profilePhoto != null) {
+        _profilePhotoUrl =
+            await UserInformations.uploadProfilePicture(_uid, _profilePhoto!);
+      }
+      final UserModel user = UserModel(
+        uid: _uid,
+        name: _name,
+        profilePhotoUrl: _profilePhotoUrl,
+      );
       await UserInformations.insertUserInfo(user);
       print('Sve je u redu!');
       status = SaveUserInfoStatus.success;
@@ -82,76 +105,136 @@ class _MoreInfoPageState extends State<MoreInfoPage> {
                 ),
                 Align(
                   alignment: Alignment.topCenter,
-                  child: PopupMenuButton(
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              FeatherIcons.image,
-                              color: lightColor,
+                  child: (_profilePhoto == null)
+                      ? PopupMenuButton(
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    FeatherIcons.image,
+                                    color: lightColor,
+                                  ),
+                                  SizedBox(
+                                    width: 10.h,
+                                  ),
+                                  const Text('Fotografija iz galerije'),
+                                ],
+                              ),
+                              value: 'pick-from-gallery',
+                              onTap: () {
+                                getImageFromGallery();
+                              },
                             ),
-                            SizedBox(
-                              width: 10.h,
+                            PopupMenuItem(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    FeatherIcons.camera,
+                                    color: lightColor,
+                                  ),
+                                  SizedBox(
+                                    width: 10.h,
+                                  ),
+                                  const Text('Fotografija sa kamere'),
+                                ],
+                              ),
+                              value: 'pick-from-camera',
+                              onTap: () {
+                                getImageFromCamera();
+                              },
                             ),
-                            const Text('Fotografija iz galerije'),
                           ],
-                        ),
-                        value: 'pick-from-gallery',
-                        onTap: () {},
-                      ),
-                      PopupMenuItem(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              FeatherIcons.camera,
-                              color: lightColor,
+                          child: Container(
+                            width: 120.w,
+                            height: 120.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(7.r),
+                              color: backgroundColor,
                             ),
-                            SizedBox(
-                              width: 10.h,
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Icon(
+                                FeatherIcons.user,
+                                size: 50.w,
+                              ),
                             ),
-                            const Text('Fotografija sa kamere'),
+                          ),
+                        )
+                      : PopupMenuButton(
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    FeatherIcons.image,
+                                    color: lightColor,
+                                  ),
+                                  SizedBox(
+                                    width: 10.h,
+                                  ),
+                                  const Text('Fotografija iz galerije'),
+                                ],
+                              ),
+                              value: 'pick-from-gallery',
+                              onTap: () {
+                                getImageFromGallery();
+                              },
+                            ),
+                            PopupMenuItem(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    FeatherIcons.camera,
+                                    color: lightColor,
+                                  ),
+                                  SizedBox(
+                                    width: 10.h,
+                                  ),
+                                  const Text('Fotografija sa kamere'),
+                                ],
+                              ),
+                              value: 'pick-from-camera',
+                              onTap: () {
+                                getImageFromCamera();
+                              },
+                            ),
+                            PopupMenuItem(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    FeatherIcons.trash2,
+                                    color: lightColor,
+                                  ),
+                                  SizedBox(
+                                    width: 10.h,
+                                  ),
+                                  const Text('Uklonite profinu fotografiju'),
+                                ],
+                              ),
+                              value: 'remove-profile-photo',
+                              onTap: () {
+                                setState(() => _profilePhoto = null);
+                              },
+                            ),
                           ],
-                        ),
-                        value: 'pick-from-camera',
-                        onTap: () {},
-                      ),
-                      PopupMenuItem(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              FeatherIcons.trash2,
-                              color: lightColor,
+                          child: Container(
+                            width: 120.w,
+                            height: 120.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(7.r),
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: FileImage(_profilePhoto!),
+                              ),
                             ),
-                            SizedBox(
-                              width: 10.h,
-                            ),
-                            const Text('Uklonite profinu fotografiju'),
-                          ],
+                          ),
                         ),
-                        value: 'remove-profile-photo',
-                        onTap: () {},
-                      ),
-                    ],
-                    child: Container(
-                      width: 120.w,
-                      height: 120.h,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(7.r),
-                        color: backgroundColor,
-                      ),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Icon(
-                          FeatherIcons.user,
-                          size: 50.w,
-                        ),
-                      ),
-                    ),
-                  ),
                 ),
                 SizedBox(
                   height: 20.h,
@@ -226,7 +309,8 @@ class _MoreInfoPageState extends State<MoreInfoPage> {
                                     width: 24.w,
                                     height: 24.h,
                                     child: const CircularProgressIndicator(
-                                        color: lightColor),
+                                      color: lightColor,
+                                    ),
                                   )
                                 : Row(
                                     children: [
