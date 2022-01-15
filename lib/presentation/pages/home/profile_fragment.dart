@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:memories/providers/user_data_provider.dart';
 import 'package:memories/theme/colors.dart';
+import 'package:provider/provider.dart';
 
 class ProfileFragment extends StatelessWidget {
   const ProfileFragment({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final _user = Provider.of<UserDataProvider>(context).userData;
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 20.w,
-        title: const Text(
-          'Jade Petterjohn',
+        title: Text(
+          _user!.name,
           overflow: TextOverflow.fade,
         ),
         actions: [
@@ -40,21 +43,34 @@ class ProfileFragment extends StatelessWidget {
             SizedBox(
               height: 50.h,
             ),
-            Container(
-              width: 120.w,
-              height: 120.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(7.r),
-                color: backgroundColor,
-              ),
-              child: Align(
-                alignment: Alignment.center,
-                child: Icon(
-                  FeatherIcons.user,
-                  size: 50.w,
-                ),
-              ),
-            ),
+            (_user.profilePhotoUrl == null)
+                ? Container(
+                    width: 120.w,
+                    height: 120.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(7.r),
+                      color: backgroundColor,
+                    ),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Icon(
+                        FeatherIcons.user,
+                        size: 50.w,
+                      ),
+                    ),
+                  )
+                : Container(
+                    width: 120.w,
+                    height: 120.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(7.r),
+                      color: backgroundColor,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(_user.profilePhotoUrl.toString()),
+                      ),
+                    ),
+                  ),
             SizedBox(
               height: 20.h,
             ),
