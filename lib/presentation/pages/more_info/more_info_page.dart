@@ -200,6 +200,7 @@ class _MoreInfoPageState extends State<MoreInfoPage> {
                             setState(() => saveUserInfoStatus =
                                 SaveUserInfoStatus.loading);
                             SaveUserInfoStatus result = await _saveUserInfo();
+                            print(_formKey);
                             if (result == SaveUserInfoStatus.success) {
                               Navigator.pushNamedAndRemoveUntil(
                                   context, '/', (route) => false);

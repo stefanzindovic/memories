@@ -9,7 +9,7 @@ class UserInformations {
     await _collection.doc(user.uid).set(user.toJson());
   }
 
-  Future<UserModel?>? getUserInfo(String uid) async {
+  static Future<UserModel?>? getUserInfo(String uid) async {
     final DocumentSnapshot snapshot = await _collection.doc(uid).get();
     if (snapshot.data() == null) {
       return null;
