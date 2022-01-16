@@ -9,6 +9,13 @@ import 'package:memories/providers/user_data_provider.dart';
 import 'package:memories/theme/colors.dart';
 import 'package:provider/provider.dart';
 
+enum UpdateUserInfoStatus {
+  initial,
+  loading,
+  success,
+  failed,
+}
+
 class EditUserInfoPage extends StatefulWidget {
   const EditUserInfoPage({Key? key}) : super(key: key);
 
@@ -23,6 +30,7 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
   String _name = '';
   File? _profilePhoto;
   String? _profilePhotoUrl;
+  bool _profilePictureIsRemoved = false;
 
   @override
   void initState() {
@@ -88,7 +96,8 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                 ),
                 Align(
                   alignment: Alignment.topCenter,
-                  child: (_profilePhotoUrl == null)
+                  child: (_profilePhotoUrl == null ||
+                          _profilePictureIsRemoved == true)
                       ? PopupMenuButton(
                           itemBuilder: (context) => [
                             PopupMenuItem(
@@ -216,7 +225,11 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                                 ],
                               ),
                               value: 'remove-profile-photo',
-                              onTap: () {},
+                              onTap: () {
+                                setState(() => _profilePhoto = null);
+                                setState(() => _profilePhotoUrl = null);
+                                setState(() => _profilePictureIsRemoved = true);
+                              },
                             ),
                           ],
                           child: (_profilePhoto == null)

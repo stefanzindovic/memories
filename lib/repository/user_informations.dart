@@ -38,4 +38,8 @@ class UserInformations {
     await _collection.doc(_auth.currentUser!.uid).delete();
     await _auth.currentUser!.delete();
   }
+
+  static Future<void> deleteUserProfilePictureFromStorage(String uid) async {
+    await _storage.child(uid).delete();
+  }
 }
