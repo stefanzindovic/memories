@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:memories/models/user.dart';
 import 'package:memories/providers/user_data_provider.dart';
 import 'package:memories/theme/colors.dart';
@@ -16,6 +19,10 @@ class EditUserInfoPage extends StatefulWidget {
 class _EditUserInfoPageState extends State<EditUserInfoPage> {
   TextEditingController _controller = TextEditingController();
   UserModel? _user;
+  final _formKey = GlobalKey<FormState>();
+  String _name = '';
+  File? _profilePhoto;
+  String? _profilePhotoUrl;
 
   @override
   void initState() {
@@ -30,6 +37,24 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
   @override
   Widget build(BuildContext context) {
     _user = Provider.of<UserDataProvider>(context).userData;
+    setState(() => _profilePhotoUrl = _user?.profilePhotoUrl);
+
+    Future getImageFromGallery() async {
+      ImagePicker _picker = ImagePicker();
+      XFile? file = await _picker.pickImage(source: ImageSource.gallery);
+      if (file != null) {
+        setState(() => _profilePhoto = File(file.path));
+      }
+    }
+
+    Future getImageFromCamera() async {
+      ImagePicker _picker = ImagePicker();
+      XFile? file = await _picker.pickImage(source: ImageSource.camera);
+      if (file != null) {
+        setState(() => _profilePhoto = File(file.path));
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Podešavanja profila'),
@@ -63,7 +88,7 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                 ),
                 Align(
                   alignment: Alignment.topCenter,
-                  child: (_user?.profilePhotoUrl == null)
+                  child: (_profilePhotoUrl == null)
                       ? PopupMenuButton(
                           itemBuilder: (context) => [
                             PopupMenuItem(
@@ -81,7 +106,9 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                                 ],
                               ),
                               value: 'pick-from-gallery',
-                              onTap: () {},
+                              onTap: () {
+                                getImageFromGallery();
+                              },
                             ),
                             PopupMenuItem(
                               child: Row(
@@ -98,24 +125,41 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                                 ],
                               ),
                               value: 'pick-from-camera',
-                              onTap: () {},
+                              onTap: () {
+                                getImageFromCamera();
+                              },
                             ),
                           ],
-                          child: Container(
-                            width: 120.w,
-                            height: 120.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(7.r),
-                              color: backgroundColor,
-                            ),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Icon(
-                                FeatherIcons.user,
-                                size: 50.w,
-                              ),
-                            ),
-                          ),
+                          child: (_profilePhoto == null)
+                              ? Container(
+                                  width: 120.w,
+                                  height: 120.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(7.r),
+                                    color: backgroundColor,
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Icon(
+                                      FeatherIcons.user,
+                                      size: 50.w,
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  width: 120.w,
+                                  height: 120.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(7.r),
+                                    color: backgroundColor,
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: FileImage(
+                                        _profilePhoto!,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                         )
                       : PopupMenuButton(
                           itemBuilder: (context) => [
@@ -134,7 +178,9 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                                 ],
                               ),
                               value: 'pick-from-gallery',
-                              onTap: () {},
+                              onTap: () {
+                                getImageFromGallery();
+                              },
                             ),
                             PopupMenuItem(
                               child: Row(
@@ -151,7 +197,9 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                                 ],
                               ),
                               value: 'pick-from-camera',
-                              onTap: () {},
+                              onTap: () {
+                                getImageFromCamera();
+                              },
                             ),
                             PopupMenuItem(
                               child: Row(
@@ -171,26 +219,42 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                               onTap: () {},
                             ),
                           ],
-                          child: Container(
-                            width: 120.w,
-                            height: 120.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(7.r),
-                              color: backgroundColor,
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(
-                                  _user!.profilePhotoUrl.toString(),
+                          child: (_profilePhoto == null)
+                              ? Container(
+                                  width: 120.w,
+                                  height: 120.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(7.r),
+                                    color: backgroundColor,
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(
+                                        _profilePhotoUrl.toString(),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  width: 120.w,
+                                  height: 120.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(7.r),
+                                    color: backgroundColor,
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: FileImage(
+                                        _profilePhoto!,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
                         ),
                 ),
                 SizedBox(
                   height: 20.h,
                 ),
                 Form(
+                  key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
