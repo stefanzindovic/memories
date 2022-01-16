@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:memories/models/user.dart';
+import 'package:memories/providers/user_data_provider.dart';
 import 'package:memories/theme/colors.dart';
+import 'package:provider/provider.dart';
 
 class EditUserInfoPage extends StatefulWidget {
   const EditUserInfoPage({Key? key}) : super(key: key);
@@ -11,8 +14,22 @@ class EditUserInfoPage extends StatefulWidget {
 }
 
 class _EditUserInfoPageState extends State<EditUserInfoPage> {
+  TextEditingController _controller = TextEditingController();
+  UserModel? _user;
+
+  @override
+  void initState() {
+    _controller = TextEditingController(text: 'Vaše ime i prezime');
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      _user = context.read<UserDataProvider>().userData;
+      _controller.text = _user!.name;
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(_controller.text);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Podešavanja profila'),
@@ -134,6 +151,7 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                         decoration: const InputDecoration(
                           hintText: 'npr. Marko Marković',
                         ),
+                        controller: _controller,
                       ),
                     ],
                   ),
