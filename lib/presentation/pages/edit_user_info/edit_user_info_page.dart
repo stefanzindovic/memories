@@ -286,6 +286,15 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                           hintText: 'npr. Marko Marković',
                         ),
                         controller: _controller,
+                        validator: (value) {
+                          if (value!.length < 5 ||
+                              value.length > 50 ||
+                              !RegExp(r"^[a-žA-Ž\s]").hasMatch(value)) {
+                            return 'Vaše ime mora sadržati najmanje 5 karaktera i najviše 50 karaktera. Takođe vaše ime može sadržati samo slova.';
+                          } else {
+                            setState(() => _name = value);
+                          }
+                        },
                       ),
                     ],
                   ),
