@@ -29,7 +29,7 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(_controller.text);
+    _user = Provider.of<UserDataProvider>(context).userData;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Podešavanja profila'),
@@ -63,76 +63,129 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                 ),
                 Align(
                   alignment: Alignment.topCenter,
-                  child: PopupMenuButton(
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              FeatherIcons.image,
-                              color: lightColor,
+                  child: (_user?.profilePhotoUrl == null)
+                      ? PopupMenuButton(
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    FeatherIcons.image,
+                                    color: lightColor,
+                                  ),
+                                  SizedBox(
+                                    width: 10.h,
+                                  ),
+                                  const Text('Fotografija iz galerije'),
+                                ],
+                              ),
+                              value: 'pick-from-gallery',
+                              onTap: () {},
                             ),
-                            SizedBox(
-                              width: 10.h,
+                            PopupMenuItem(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    FeatherIcons.camera,
+                                    color: lightColor,
+                                  ),
+                                  SizedBox(
+                                    width: 10.h,
+                                  ),
+                                  const Text('Fotografija sa kamere'),
+                                ],
+                              ),
+                              value: 'pick-from-camera',
+                              onTap: () {},
                             ),
-                            const Text('Fotografija iz galerije'),
                           ],
-                        ),
-                        value: 'pick-from-gallery',
-                        onTap: () {},
-                      ),
-                      PopupMenuItem(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              FeatherIcons.camera,
-                              color: lightColor,
+                          child: Container(
+                            width: 120.w,
+                            height: 120.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(7.r),
+                              color: backgroundColor,
                             ),
-                            SizedBox(
-                              width: 10.h,
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Icon(
+                                FeatherIcons.user,
+                                size: 50.w,
+                              ),
                             ),
-                            const Text('Fotografija sa kamere'),
+                          ),
+                        )
+                      : PopupMenuButton(
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    FeatherIcons.image,
+                                    color: lightColor,
+                                  ),
+                                  SizedBox(
+                                    width: 10.h,
+                                  ),
+                                  const Text('Fotografija iz galerije'),
+                                ],
+                              ),
+                              value: 'pick-from-gallery',
+                              onTap: () {},
+                            ),
+                            PopupMenuItem(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    FeatherIcons.camera,
+                                    color: lightColor,
+                                  ),
+                                  SizedBox(
+                                    width: 10.h,
+                                  ),
+                                  const Text('Fotografija sa kamere'),
+                                ],
+                              ),
+                              value: 'pick-from-camera',
+                              onTap: () {},
+                            ),
+                            PopupMenuItem(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    FeatherIcons.trash2,
+                                    color: lightColor,
+                                  ),
+                                  SizedBox(
+                                    width: 10.h,
+                                  ),
+                                  const Text('Uklonite profinu fotografiju'),
+                                ],
+                              ),
+                              value: 'remove-profile-photo',
+                              onTap: () {},
+                            ),
                           ],
-                        ),
-                        value: 'pick-from-camera',
-                        onTap: () {},
-                      ),
-                      PopupMenuItem(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              FeatherIcons.trash2,
-                              color: lightColor,
+                          child: Container(
+                            width: 120.w,
+                            height: 120.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(7.r),
+                              color: backgroundColor,
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(
+                                  _user!.profilePhotoUrl.toString(),
+                                ),
+                              ),
                             ),
-                            SizedBox(
-                              width: 10.h,
-                            ),
-                            const Text('Uklonite profinu fotografiju'),
-                          ],
+                          ),
                         ),
-                        value: 'remove-profile-photo',
-                        onTap: () {},
-                      ),
-                    ],
-                    child: Container(
-                      width: 120.w,
-                      height: 120.h,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(7.r),
-                        color: backgroundColor,
-                      ),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Icon(
-                          FeatherIcons.user,
-                          size: 50.w,
-                        ),
-                      ),
-                    ),
-                  ),
                 ),
                 SizedBox(
                   height: 20.h,
