@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:memories/providers/current_user_provider.dart';
 import 'package:memories/theme/colors.dart';
@@ -37,8 +36,9 @@ class _SigninPageState extends State<SigninPage> {
     try {
       await SecureStorage.deleteUserCredentialFromStorage();
       await UserAuthentication.signinUser(email, password);
-      Provider.of<CurrentUserProvider>(context, listen: false).setUid();
-      Provider.of<CurrentUserProvider>(context, listen: false).setCredentials();
+      await Provider.of<CurrentUserProvider>(context, listen: false).setUid();
+      await Provider.of<CurrentUserProvider>(context, listen: false)
+          .setCredentials();
       print('Sve je u redu!');
       status = SigninStatus.success;
     } on FirebaseAuthException catch (e) {

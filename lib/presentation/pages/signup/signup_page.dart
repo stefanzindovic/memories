@@ -31,8 +31,9 @@ class _SignupPageState extends State<SignupPage> {
     try {
       await SecureStorage.deleteUserCredentialFromStorage();
       await UserAuthentication.signupUser(email, password);
-      Provider.of<CurrentUserProvider>(context, listen: false).setUid();
-      Provider.of<CurrentUserProvider>(context, listen: false).setCredentials();
+      await Provider.of<CurrentUserProvider>(context, listen: false).setUid();
+      await Provider.of<CurrentUserProvider>(context, listen: false)
+          .setCredentials();
       status = SignupStatus.success;
     } on FirebaseAuthException catch (e) {
       print(e);
