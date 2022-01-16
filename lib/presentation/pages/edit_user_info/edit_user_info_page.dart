@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memories/models/user.dart';
 import 'package:memories/providers/user_data_provider.dart';
+import 'package:memories/repository/user_informations.dart';
 import 'package:memories/theme/colors.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +14,7 @@ enum UpdateUserInfoStatus {
   initial,
   loading,
   success,
-  failed,
+  error,
 }
 
 class EditUserInfoPage extends StatefulWidget {
@@ -31,6 +32,32 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
   File? _profilePhoto;
   String? _profilePhotoUrl;
   bool _profilePictureIsRemoved = false;
+  UpdateUserInfoStatus _updateUserInfoStatus = UpdateUserInfoStatus.initial;
+  String? errorMessage;
+
+  Future<UpdateUserInfoStatus> _updateUser() async {
+    UpdateUserInfoStatus status = _updateUserInfoStatus;
+    try {
+      if (_profilePictureIsRemoved == true) {
+        await UserInformations.deleteUserProfilePictureFromStorage(_user!.uid);
+        _profilePhotoUrl = null;
+      } else if (_profilePhoto != null) {
+        _profilePhotoUrl = await UserInformations.uploadProfilePicture(
+            _user!.uid, _profilePhoto!);
+      }
+      await UserInformations.updateUserInfo(
+          _user!.uid, _name, _profilePhotoUrl);
+      print('Sve je u redu!');
+      status = UpdateUserInfoStatus.success;
+    } catch (e) {
+      print(e);
+      status = UpdateUserInfoStatus.error;
+      errorMessage =
+          'Došlo je do neočekivane greške pri izmjeni vaših informacija. Molimo vas da pokušate ponovo.';
+    }
+
+    return status;
+  }
 
   @override
   void initState() {
@@ -70,11 +97,49 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
           Padding(
             padding: EdgeInsets.only(right: 10.w),
             child: IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  FeatherIcons.check,
-                  size: 30.w,
-                )),
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    setState(() =>
+                        _updateUserInfoStatus = UpdateUserInfoStatus.loading);
+                    final UpdateUserInfoStatus result = await _updateUser();
+                    if (result == UpdateUserInfoStatus.error) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: backgroundColor,
+                          content: Text(
+                            errorMessage.toString(),
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                        ),
+                      );
+                    } else if (result == UpdateUserInfoStatus.success) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: backgroundColor,
+                          content: Text(
+                            'Informacije vezane za vaš profil su uspješno izmijenjene.',
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                        ),
+                      );
+                    }
+                    setState(() =>
+                        _updateUserInfoStatus = UpdateUserInfoStatus.initial);
+                  }
+                },
+                icon: (_updateUserInfoStatus == UpdateUserInfoStatus.loading)
+                    ? SizedBox(
+                        width: 24.w,
+                        height: 24.h,
+                        child: const CircularProgressIndicator(
+                          color: lightColor,
+                        ),
+                      )
+                    : Icon(
+                        FeatherIcons.check,
+                        size: 30.w,
+                      )),
           ),
         ],
       ),

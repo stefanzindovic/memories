@@ -42,4 +42,11 @@ class UserInformations {
   static Future<void> deleteUserProfilePictureFromStorage(String uid) async {
     await _storage.child(uid).delete();
   }
+
+  static Future<void> updateUserInfo(
+      String uid, String name, String? profilePictureUrl) async {
+    final UserModel _user =
+        UserModel(uid: uid, name: name, profilePhotoUrl: profilePictureUrl);
+    await _collection.doc(uid).update(_user.toJson());
+  }
 }
