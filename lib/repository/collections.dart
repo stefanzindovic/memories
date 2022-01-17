@@ -20,4 +20,18 @@ class CollectionsInformations {
         await _storage.child(collectionId).putFile(photo);
     return upload.ref.getDownloadURL();
   }
+
+  static Future<List<CollectionModel?>> getUserCollections(String uid) async {
+    List<CollectionModel?> collections = [];
+    final QuerySnapshot snapshots =
+        await _collection.where('authorId', isEqualTo: uid).get();
+
+    List docs = snapshots.docs;
+    for (var doc in docs) {
+      if (doc != null) {
+        collections.add(CollectionModel.fromJson(doc));
+      }
+    }
+    return collections;
+  }
 }

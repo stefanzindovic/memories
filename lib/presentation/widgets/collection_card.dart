@@ -4,42 +4,60 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/theme/colors.dart';
 
 class CollectionCard extends StatelessWidget {
-  const CollectionCard({Key? key}) : super(key: key);
+  final String title;
+  final String? coverPhotoUrl;
+  final String collectionId;
+  const CollectionCard({
+    Key? key,
+    required this.title,
+    required this.coverPhotoUrl,
+    required this.collectionId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {},
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width / 2 - 20.w,
-        height: MediaQuery.of(context).size.width / 2,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width / 2 - 40,
-              height: MediaQuery.of(context).size.width / 2 - 40,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(7.r),
-                color: backgroundColor,
-              ),
-              child: Align(
-                alignment: Alignment.center,
-                child: Icon(
-                  FeatherIcons.image,
-                  size: 50.w,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          (coverPhotoUrl == null)
+              ? Container(
+                  width: 140.w,
+                  height: 140.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(7.r),
+                    color: backgroundColor,
+                  ),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Icon(
+                      FeatherIcons.image,
+                      size: 50.w,
+                    ),
+                  ),
+                )
+              : Container(
+                  width: 140.w,
+                  height: 140.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(7.r),
+                    color: backgroundColor,
+                    image: DecorationImage(
+                      image: NetworkImage(coverPhotoUrl!),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Text(
-              'Doktor',
-              style: Theme.of(context).textTheme.headline3,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+          SizedBox(height: 3.h),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.headline3,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
