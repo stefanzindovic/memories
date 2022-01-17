@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:memories/models/collection.dart';
 import 'package:memories/models/user.dart';
 import 'package:memories/providers/user_data_provider.dart';
+import 'package:memories/repository/collections.dart';
 import 'package:memories/repository/user_informations.dart';
 import 'package:memories/theme/colors.dart';
 import 'package:provider/provider.dart';
@@ -48,6 +50,34 @@ class _AddCollectionPageState extends State<AddCollectionPage> {
     }
   }
 
+  Future<SaveCollectionStatus> _saveCollection() async {
+    SaveCollectionStatus status = _saveCollectionStatus;
+    String collectionId =
+        '${DateTime.now().microsecondsSinceEpoch.toString()}${_user!.uid}';
+    String? coverPhotoUrl;
+    try {
+      if (_coverPhoto != null) {
+        coverPhotoUrl = await CollectionsInformations.uploadCoverPhoto(
+            collectionId, _coverPhoto!);
+      }
+      final collection = CollectionModel(
+        id: collectionId,
+        title: _title,
+        coverPhotoUrl: coverPhotoUrl,
+        authorId: _user!.uid,
+      );
+      await CollectionsInformations.createNewCollection(collection);
+      print('Sve je u redu!');
+      status = SaveCollectionStatus.success;
+    } catch (e) {
+      print(e);
+      errorMessage =
+          'Došlo je do neočekivane greške pri kreiranju nove kolekcije. Molimo vas da pokušate ponovo.';
+      status = SaveCollectionStatus.error;
+    }
+    return status;
+  }
+
   @override
   Widget build(BuildContext context) {
     _user = Provider.of<UserDataProvider>(context).userData;
@@ -58,13 +88,50 @@ class _AddCollectionPageState extends State<AddCollectionPage> {
           Padding(
             padding: EdgeInsets.only(right: 10.w),
             child: IconButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {}
-                },
-                icon: Icon(
-                  FeatherIcons.check,
-                  size: 30.w,
-                )),
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  setState(() =>
+                      _saveCollectionStatus = SaveCollectionStatus.loading);
+                  final SaveCollectionStatus result = await _saveCollection();
+                  if (result == SaveCollectionStatus.success) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: backgroundColor,
+                        content: Text(
+                          'Nova kolekcija je uspješno kreirana!',
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                      ),
+                    );
+                  } else if (result == SaveCollectionStatus.error) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: backgroundColor,
+                        content: Text(
+                          errorMessage.toString(),
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                      ),
+                    );
+                  }
+                  setState(() =>
+                      _saveCollectionStatus = SaveCollectionStatus.initial);
+                }
+              },
+              icon: (_saveCollectionStatus == SaveCollectionStatus.loading)
+                  ? SizedBox(
+                      width: 24.w,
+                      height: 24.h,
+                      child: const CircularProgressIndicator(
+                        color: lightColor,
+                      ),
+                    )
+                  : Icon(
+                      FeatherIcons.check,
+                      size: 30.w,
+                    ),
+            ),
           ),
         ],
       ),

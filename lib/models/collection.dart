@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CollectionModel {
   final String id;
   final String title;
-  final String coverPhotoUrl;
+  final String? coverPhotoUrl;
   final String authorId;
 
   CollectionModel({
