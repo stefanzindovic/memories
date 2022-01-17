@@ -43,15 +43,14 @@ class CollectionsFragment extends StatelessWidget {
             return true;
           },
           child: GridView.count(
+            padding: EdgeInsets.only(top: 30.h),
             crossAxisCount: 2,
             crossAxisSpacing: 20.0.w,
             mainAxisSpacing: 40.0.h,
             children: [
               for (var collection in _collections)
                 CollectionCard(
-                  title: collection!.title,
-                  coverPhotoUrl: collection.coverPhotoUrl,
-                  collectionId: collection.id,
+                  collection: collection!,
                 ),
             ],
           ),

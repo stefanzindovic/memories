@@ -1,35 +1,32 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:memories/models/collection.dart';
 import 'package:memories/theme/colors.dart';
 
 class CollectionCard extends StatelessWidget {
-  final String title;
-  final String? coverPhotoUrl;
-  final String collectionId;
-  const CollectionCard({
+  CollectionModel collection;
+  CollectionCard({
     Key? key,
-    required this.title,
-    required this.coverPhotoUrl,
-    required this.collectionId,
+    required this.collection,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        final Object arguments = {
-          'id': collectionId,
-          'title': title,
-          'coverPhotoUrl': coverPhotoUrl,
-        };
-        Navigator.pushNamed(context, '/collection', arguments: arguments);
+        Navigator.pushNamed(
+          context,
+          '/collection',
+        );
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          (coverPhotoUrl == null)
+          (collection.coverPhotoUrl == null)
               ? Container(
                   width: 140.w,
                   height: 140.h,
@@ -52,14 +49,14 @@ class CollectionCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(7.r),
                     color: backgroundColor,
                     image: DecorationImage(
-                      image: NetworkImage(coverPhotoUrl!),
+                      image: NetworkImage(collection.coverPhotoUrl!),
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
           SizedBox(height: 3.h),
           Text(
-            title,
+            collection.title,
             style: Theme.of(context).textTheme.headline3,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
