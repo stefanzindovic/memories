@@ -17,7 +17,14 @@ class CollectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        final Object arguments = {
+          'id': collectionId,
+          'title': title,
+          'coverPhotoUrl': coverPhotoUrl,
+        };
+        Navigator.pushNamed(context, '/collection', arguments: arguments);
+      },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
