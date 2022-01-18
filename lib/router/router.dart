@@ -25,9 +25,10 @@ Route generateApplicationRouter(RouteSettings settings) {
     case collectionRoute:
       final arguments = settings.arguments as Map;
       return MaterialPageRoute(
-          builder: (BuildContext context) => CollectionPage(
-                data: arguments,
-              ));
+        builder: (BuildContext context) => CollectionPage(
+          data: arguments,
+        ),
+      );
     case addCollectionRoute:
       return MaterialPageRoute(
           builder: (BuildContext context) => const AddCollectionPage());
@@ -36,10 +37,15 @@ Route generateApplicationRouter(RouteSettings settings) {
           builder: (BuildContext context) => const AddMemoryPage());
     case editCollectionRoute:
       return MaterialPageRoute(
-          builder: (BuildContext context) => const EditCollectionPage());
+        builder: (BuildContext context) => const EditCollectionPage(),
+      );
     case editMemoryRoute:
+      final arguments = settings.arguments as Map;
       return MaterialPageRoute(
-          builder: (BuildContext context) => const EditMemoryPage());
+        builder: (BuildContext context) => EditMemoryPage(
+          data: arguments,
+        ),
+      );
     case settingsRoute:
       return MaterialPageRoute(
           builder: (BuildContext context) => const ProfileOptionsPage());

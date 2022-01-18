@@ -42,7 +42,7 @@ class CollectionsFragment extends StatelessWidget {
             overscroll.disallowIndicator();
             return true;
           },
-          child: (_collections.length < 1)
+          child: (_collections.isEmpty)
               ? Center(
                   child: Text(
                     'Nema kolekcija',

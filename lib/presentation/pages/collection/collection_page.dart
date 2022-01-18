@@ -14,7 +14,10 @@ enum DeleteCollectionStatus {
 
 class CollectionPage extends StatelessWidget {
   final Map data;
-  CollectionPage({Key? key, required this.data}) : super(key: key);
+  CollectionPage({
+    Key? key,
+    required this.data,
+  }) : super(key: key);
 
   String? errorMessage;
 
@@ -45,31 +48,13 @@ class CollectionPage extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: 10.w),
             child: PopupMenuButton(
-              child: Icon(
-                FeatherIcons.moreVertical,
-                size: 30.w,
-              ),
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 'edit-memory',
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(
-                        FeatherIcons.edit3,
-                        size: 24.w,
-                      ),
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      const Text('Izmijenite kolekciju'),
-                    ],
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'edit-memory',
-                  onTap: () async {
+              onSelected: (result) async {
+                switch (result) {
+                  case 'edit-collection':
+                    Navigator.pushNamed(context, '/edit-collection',
+                        arguments: data);
+                    break;
+                  case 'delete-collection':
                     final DeleteCollectionStatus result =
                         await _deleteCollection();
                     if (result == DeleteCollectionStatus.success) {
@@ -94,7 +79,32 @@ class CollectionPage extends StatelessWidget {
                         ),
                       );
                     }
-                  },
+                }
+              },
+              child: Icon(
+                FeatherIcons.moreVertical,
+                size: 30.w,
+              ),
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'edit-collection',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        FeatherIcons.edit3,
+                        size: 24.w,
+                      ),
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                      const Text('Izmijenite kolekciju'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'delete-collection',
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
