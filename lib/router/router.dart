@@ -17,14 +17,17 @@ import 'package:memories/router/routes.dart';
 Route generateApplicationRouter(RouteSettings settings) {
   switch (settings.name) {
     case homeRoute:
-      return MaterialPageRoute(
-          builder: (BuildContext context) => const HomePage());
+      return MaterialPageRoute(builder: (BuildContext context) => HomePage());
     case memoryRoute:
       return MaterialPageRoute(
           builder: (BuildContext context) => const MemoryPage());
     case collectionRoute:
+      final arguments = settings.arguments as Map;
       return MaterialPageRoute(
-          builder: (BuildContext context) => const CollectionPage());
+        builder: (BuildContext context) => CollectionPage(
+          data: arguments,
+        ),
+      );
     case addCollectionRoute:
       return MaterialPageRoute(
           builder: (BuildContext context) => const AddCollectionPage());
@@ -32,11 +35,19 @@ Route generateApplicationRouter(RouteSettings settings) {
       return MaterialPageRoute(
           builder: (BuildContext context) => const AddMemoryPage());
     case editCollectionRoute:
+      final arguments = settings.arguments as Map;
       return MaterialPageRoute(
-          builder: (BuildContext context) => const EditCollectionPage());
+        builder: (BuildContext context) => EditCollectionPage(
+          data: arguments,
+        ),
+      );
     case editMemoryRoute:
+      final arguments = settings.arguments as Map;
       return MaterialPageRoute(
-          builder: (BuildContext context) => const EditMemoryPage());
+        builder: (BuildContext context) => EditMemoryPage(
+          data: arguments,
+        ),
+      );
     case settingsRoute:
       return MaterialPageRoute(
           builder: (BuildContext context) => const ProfileOptionsPage());
@@ -56,7 +67,6 @@ Route generateApplicationRouter(RouteSettings settings) {
       return MaterialPageRoute(
           builder: (BuildContext context) => const SignupPage());
     default:
-      return MaterialPageRoute(
-          builder: (BuildContext context) => const HomePage());
+      return MaterialPageRoute(builder: (BuildContext context) => HomePage());
   }
 }

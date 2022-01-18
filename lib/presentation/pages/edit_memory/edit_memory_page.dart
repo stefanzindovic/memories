@@ -5,7 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:memories/theme/colors.dart';
 
 class EditMemoryPage extends StatefulWidget {
-  const EditMemoryPage({Key? key}) : super(key: key);
+  final Map data;
+  const EditMemoryPage({
+    Key? key,
+    required this.data,
+  }) : super(key: key);
 
   @override
   _EditMemoryPageState createState() => _EditMemoryPageState();
@@ -101,21 +105,34 @@ class _EditMemoryPageState extends State<EditMemoryPage> {
                         onTap: () {},
                       ),
                     ],
-                    child: Container(
-                      width: double.infinity,
-                      height: 150.h,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(7.r),
-                        color: backgroundColor,
-                      ),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Icon(
-                          FeatherIcons.image,
-                          size: 50.w,
-                        ),
-                      ),
-                    ),
+                    child: (widget.data['coverPhotoUrl'] == null)
+                        ? Container(
+                            width: double.infinity,
+                            height: 150.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(7.r),
+                              color: backgroundColor,
+                            ),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Icon(
+                                FeatherIcons.image,
+                                size: 50.w,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            width: double.infinity,
+                            height: 150.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(7.r),
+                              color: backgroundColor,
+                              image: DecorationImage(
+                                image:
+                                    NetworkImage(widget.data['coverPhotoUrl']),
+                              ),
+                            ),
+                          ),
                   ),
                 ),
                 SizedBox(

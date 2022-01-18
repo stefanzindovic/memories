@@ -1,30 +1,100 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:memories/repository/collections_informations.dart';
 import 'package:memories/theme/colors.dart';
 
-class CollectionPage extends StatelessWidget {
-  const CollectionPage({Key? key}) : super(key: key);
+enum DeleteCollectionStatus {
+  initial,
+  success,
+  error,
+}
+
+class CollectionPage extends StatefulWidget {
+  Map data;
+  CollectionPage({Key? key, required this.data}) : super(key: key);
+
+  @override
+  _CollectionPageState createState() => _CollectionPageState();
+}
+
+class _CollectionPageState extends State<CollectionPage> {
+  String? errorMessage;
+  Map? editInfo;
+
+  Future<DeleteCollectionStatus> _deleteCollection() async {
+    DeleteCollectionStatus status = DeleteCollectionStatus.initial;
+    try {
+      await CollectionsInformations.deleteCollection(widget.data['id']);
+      status = DeleteCollectionStatus.success;
+      print('Sve je u redu!');
+    } catch (e) {
+      print(e);
+      errorMessage =
+          'Došlo je do neočekivane greške pri brisanju ove kolekcije. Molimo vas da pokušate ponovo.';
+      status = DeleteCollectionStatus.error;
+    }
+    return status;
+  }
 
   @override
   Widget build(BuildContext context) {
+    print(editInfo?['coverPhotoUrl'] == null);
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Naslov kolekcije',
+        title: Text(
+          editInfo?['title'] ?? widget.data['title'],
           overflow: TextOverflow.fade,
         ),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10.w),
             child: PopupMenuButton(
+              onSelected: (result) async {
+                switch (result) {
+                  case 'edit-collection':
+                    editInfo = await Navigator.pushNamed(
+                        context, '/edit-collection',
+                        arguments: editInfo ?? widget.data) as Map;
+                    setState(() => editInfo = editInfo!);
+                    widget.data['coverPhotoUrl'] = editInfo?['coverPhotoUrl'];
+                    break;
+                  case 'delete-collection':
+                    final DeleteCollectionStatus result =
+                        await _deleteCollection();
+                    if (result == DeleteCollectionStatus.success) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: backgroundColor,
+                          content: Text(
+                            'Uspješno ste obrisali kolekciju "${widget.data['title']}"',
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                        ),
+                      );
+                    } else if (result == DeleteCollectionStatus.error) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: backgroundColor,
+                          content: Text(
+                            errorMessage.toString(),
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                        ),
+                      );
+                    }
+                }
+              },
               child: Icon(
                 FeatherIcons.moreVertical,
                 size: 30.w,
               ),
               itemBuilder: (context) => [
                 PopupMenuItem(
-                  value: 'edit-memory',
+                  value: 'edit-collection',
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -41,7 +111,7 @@ class CollectionPage extends StatelessWidget {
                   ),
                 ),
                 PopupMenuItem(
-                  value: 'edit-memory',
+                  value: 'delete-collection',
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -78,21 +148,38 @@ class CollectionPage extends StatelessWidget {
                 SizedBox(
                   height: 50.h,
                 ),
-                Container(
-                  width: double.infinity,
-                  height: 150.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(7.r),
-                    color: backgroundColor,
-                  ),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Icon(
-                      FeatherIcons.image,
-                      size: 50.w,
-                    ),
-                  ),
-                ),
+                (widget.data['coverPhotoUrl'] == null &&
+                        editInfo?['coverPhotoUrl'] == null)
+                    ? Container(
+                        width: double.infinity,
+                        height: 150.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(7.r),
+                          color: backgroundColor,
+                        ),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Icon(
+                            FeatherIcons.image,
+                            size: 50.w,
+                          ),
+                        ),
+                      )
+                    : Container(
+                        width: double.infinity,
+                        height: 150.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(7.r),
+                          color: backgroundColor,
+                          image: DecorationImage(
+                            image: NetworkImage(
+                              editInfo?['coverPhotoUrl'] ??
+                                  widget.data['coverPhotoUrl'],
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                 SizedBox(
                   height: 20.h,
                 ),

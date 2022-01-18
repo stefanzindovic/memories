@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/presentation/widgets/authentication_wrapper.dart';
+import 'package:memories/providers/collection_data_proivder.dart';
 import 'package:memories/providers/current_user_provider.dart';
 import 'package:memories/providers/user_data_provider.dart';
 import 'package:memories/router/router.dart';
@@ -17,6 +18,8 @@ class MyApp extends StatelessWidget {
     Provider.of<CurrentUserProvider>(context, listen: false).setCredentials();
     Provider.of<UserDataProvider>(context, listen: false)
         .setUserData(Provider.of<CurrentUserProvider>(context).uid.toString());
+    Provider.of<CollectionDataProvoder>(context, listen: false).setCollections(
+        Provider.of<CurrentUserProvider>(context).uid.toString());
     return ScreenUtilInit(
       designSize: const Size(360, 800),
       builder: () => MaterialApp(

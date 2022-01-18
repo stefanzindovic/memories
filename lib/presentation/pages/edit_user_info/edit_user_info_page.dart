@@ -258,6 +258,8 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                               value: 'pick-from-gallery',
                               onTap: () {
                                 getImageFromGallery();
+                                setState(
+                                    () => _profilePictureIsRemoved = false);
                               },
                             ),
                             PopupMenuItem(
@@ -277,6 +279,8 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                               value: 'pick-from-camera',
                               onTap: () {
                                 getImageFromCamera();
+                                setState(
+                                    () => _profilePictureIsRemoved = false);
                               },
                             ),
                             PopupMenuItem(
