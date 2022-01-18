@@ -17,9 +17,11 @@ class CollectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        final data = collection.toJson();
         Navigator.pushNamed(
           context,
           '/collection',
+          arguments: data,
         );
       },
       child: Column(

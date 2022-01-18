@@ -6,14 +6,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/theme/colors.dart';
 
 class CollectionPage extends StatelessWidget {
-  const CollectionPage({Key? key}) : super(key: key);
+  final Map data;
+  const CollectionPage({
+    Key? key,
+    required this.data,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Naslov kolekcije",
+          data['title'],
           overflow: TextOverflow.fade,
         ),
         actions: [
@@ -80,21 +84,36 @@ class CollectionPage extends StatelessWidget {
                 SizedBox(
                   height: 50.h,
                 ),
-                Container(
-                  width: double.infinity,
-                  height: 150.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(7.r),
-                    color: backgroundColor,
-                  ),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Icon(
-                      FeatherIcons.image,
-                      size: 50.w,
-                    ),
-                  ),
-                ),
+                (data['coverPhotoUrl'] == null)
+                    ? Container(
+                        width: double.infinity,
+                        height: 150.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(7.r),
+                          color: backgroundColor,
+                        ),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Icon(
+                            FeatherIcons.image,
+                            size: 50.w,
+                          ),
+                        ),
+                      )
+                    : Container(
+                        width: double.infinity,
+                        height: 150.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(7.r),
+                          color: backgroundColor,
+                          image: DecorationImage(
+                            image: NetworkImage(
+                              data['coverPhotoUrl'],
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                 SizedBox(
                   height: 20.h,
                 ),

@@ -43,7 +43,7 @@ class CollectionsFragment extends StatelessWidget {
             return true;
           },
           child: GridView.count(
-            padding: EdgeInsets.only(top: 30.h),
+            padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
             crossAxisCount: 2,
             crossAxisSpacing: 20.0.w,
             mainAxisSpacing: 40.0.h,

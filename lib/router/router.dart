@@ -23,8 +23,11 @@ Route generateApplicationRouter(RouteSettings settings) {
       return MaterialPageRoute(
           builder: (BuildContext context) => const MemoryPage());
     case collectionRoute:
+      final arguments = settings.arguments as Map;
       return MaterialPageRoute(
-          builder: (BuildContext context) => const CollectionPage());
+          builder: (BuildContext context) => CollectionPage(
+                data: arguments,
+              ));
     case addCollectionRoute:
       return MaterialPageRoute(
           builder: (BuildContext context) => const AddCollectionPage());
