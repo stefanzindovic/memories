@@ -178,6 +178,7 @@ class _EditCollectionPageState extends State<EditCollectionPage> {
                               value: 'pick-from-gallery',
                               onTap: () {
                                 getImageFromGallery();
+                                setState(() => _coverPhotoIsRemoved = false);
                               },
                             ),
                             PopupMenuItem(
@@ -201,21 +202,35 @@ class _EditCollectionPageState extends State<EditCollectionPage> {
                               },
                             ),
                           ],
-                          child: Container(
-                            width: double.infinity,
-                            height: 150.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(7.r),
-                              color: backgroundColor,
-                            ),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Icon(
-                                FeatherIcons.image,
-                                size: 50.w,
-                              ),
-                            ),
-                          ),
+                          child: (_coverPhoto == null)
+                              ? Container(
+                                  width: double.infinity,
+                                  height: 150.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(7.r),
+                                    color: backgroundColor,
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Icon(
+                                      FeatherIcons.image,
+                                      size: 50.w,
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  width: double.infinity,
+                                  height: 150.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(7.r),
+                                    color: backgroundColor,
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                          widget.data['coverPhotoUrl']),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
                         )
                       : PopupMenuButton(
                           itemBuilder: (context) => [
