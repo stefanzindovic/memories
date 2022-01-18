@@ -18,6 +18,7 @@ class ProfileFragment extends StatelessWidget {
         Provider.of<CollectionDataProvoder>(context).collections;
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         titleSpacing: 20.w,
         title: Text(
           _user!.name,

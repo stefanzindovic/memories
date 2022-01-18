@@ -44,4 +44,12 @@ class CollectionsInformations {
     }
     await _collection.doc(collectionId).delete();
   }
+
+  static Future<void> updateCollection(CollectionModel data) async {
+    await _collection.doc(data.id).update(data.toJson());
+  }
+
+  static Future<void> deleteCollectionCoverPhotoFromStorage(String id) async {
+    await _storage.child(id).delete();
+  }
 }

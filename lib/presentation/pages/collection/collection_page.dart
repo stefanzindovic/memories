@@ -12,19 +12,22 @@ enum DeleteCollectionStatus {
   error,
 }
 
-class CollectionPage extends StatelessWidget {
-  final Map data;
-  CollectionPage({
-    Key? key,
-    required this.data,
-  }) : super(key: key);
+class CollectionPage extends StatefulWidget {
+  Map data;
+  CollectionPage({Key? key, required this.data}) : super(key: key);
 
+  @override
+  _CollectionPageState createState() => _CollectionPageState();
+}
+
+class _CollectionPageState extends State<CollectionPage> {
   String? errorMessage;
+  Map? editInfo;
 
   Future<DeleteCollectionStatus> _deleteCollection() async {
     DeleteCollectionStatus status = DeleteCollectionStatus.initial;
     try {
-      await CollectionsInformations.deleteCollection(data['id']);
+      await CollectionsInformations.deleteCollection(widget.data['id']);
       status = DeleteCollectionStatus.success;
       print('Sve je u redu!');
     } catch (e) {
@@ -38,10 +41,11 @@ class CollectionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(editInfo?['coverPhotoUrl'] == null);
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          data['title'],
+          editInfo?['title'] ?? widget.data['title'],
           overflow: TextOverflow.fade,
         ),
         actions: [
@@ -51,8 +55,11 @@ class CollectionPage extends StatelessWidget {
               onSelected: (result) async {
                 switch (result) {
                   case 'edit-collection':
-                    Navigator.pushNamed(context, '/edit-collection',
-                        arguments: data);
+                    editInfo = await Navigator.pushNamed(
+                        context, '/edit-collection',
+                        arguments: editInfo ?? widget.data) as Map;
+                    setState(() => editInfo = editInfo!);
+                    widget.data['coverPhotoUrl'] = editInfo?['coverPhotoUrl'];
                     break;
                   case 'delete-collection':
                     final DeleteCollectionStatus result =
@@ -63,7 +70,7 @@ class CollectionPage extends StatelessWidget {
                         SnackBar(
                           backgroundColor: backgroundColor,
                           content: Text(
-                            'Uspješno ste obrisali kolekciju "${data['title']}"',
+                            'Uspješno ste obrisali kolekciju "${widget.data['title']}"',
                             style: Theme.of(context).textTheme.bodyText2,
                           ),
                         ),
@@ -141,7 +148,8 @@ class CollectionPage extends StatelessWidget {
                 SizedBox(
                   height: 50.h,
                 ),
-                (data['coverPhotoUrl'] == null)
+                (widget.data['coverPhotoUrl'] == null &&
+                        editInfo?['coverPhotoUrl'] == null)
                     ? Container(
                         width: double.infinity,
                         height: 150.h,
@@ -165,7 +173,8 @@ class CollectionPage extends StatelessWidget {
                           color: backgroundColor,
                           image: DecorationImage(
                             image: NetworkImage(
-                              data['coverPhotoUrl'],
+                              editInfo?['coverPhotoUrl'] ??
+                                  widget.data['coverPhotoUrl'],
                             ),
                             fit: BoxFit.cover,
                           ),

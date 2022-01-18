@@ -9,6 +9,7 @@ class FavoritesFragment extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         titleSpacing: 20.w,
         title: const Text(
           'Najdraže uspomene',

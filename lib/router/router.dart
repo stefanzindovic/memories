@@ -17,8 +17,7 @@ import 'package:memories/router/routes.dart';
 Route generateApplicationRouter(RouteSettings settings) {
   switch (settings.name) {
     case homeRoute:
-      return MaterialPageRoute(
-          builder: (BuildContext context) => const HomePage());
+      return MaterialPageRoute(builder: (BuildContext context) => HomePage());
     case memoryRoute:
       return MaterialPageRoute(
           builder: (BuildContext context) => const MemoryPage());
@@ -36,8 +35,11 @@ Route generateApplicationRouter(RouteSettings settings) {
       return MaterialPageRoute(
           builder: (BuildContext context) => const AddMemoryPage());
     case editCollectionRoute:
+      final arguments = settings.arguments as Map;
       return MaterialPageRoute(
-        builder: (BuildContext context) => const EditCollectionPage(),
+        builder: (BuildContext context) => EditCollectionPage(
+          data: arguments,
+        ),
       );
     case editMemoryRoute:
       final arguments = settings.arguments as Map;
@@ -65,7 +67,6 @@ Route generateApplicationRouter(RouteSettings settings) {
       return MaterialPageRoute(
           builder: (BuildContext context) => const SignupPage());
     default:
-      return MaterialPageRoute(
-          builder: (BuildContext context) => const HomePage());
+      return MaterialPageRoute(builder: (BuildContext context) => HomePage());
   }
 }
