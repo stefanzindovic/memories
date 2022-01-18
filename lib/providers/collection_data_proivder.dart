@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memories/models/collection.dart';
-import 'package:memories/repository/collections.dart';
+import 'package:memories/repository/collections_informations.dart';
 
 class CollectionDataProvoder extends ChangeNotifier {
   List<CollectionModel?> _collections = [];

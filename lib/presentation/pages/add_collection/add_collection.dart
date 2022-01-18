@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:memories/models/collection.dart';
 import 'package:memories/models/user.dart';
 import 'package:memories/providers/user_data_provider.dart';
-import 'package:memories/repository/collections.dart';
+import 'package:memories/repository/collections_informations.dart';
 import 'package:memories/repository/user_informations.dart';
 import 'package:memories/theme/colors.dart';
 import 'package:provider/provider.dart';

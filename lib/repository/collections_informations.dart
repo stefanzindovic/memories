@@ -34,4 +34,14 @@ class CollectionsInformations {
     }
     return collections;
   }
+
+  static Future<void> deleteCollection(String collectionId) async {
+    final collection = await _collection.doc(collectionId).get();
+    final data = collection.data() as Map;
+
+    if (data['coverPhotoUrl'] != null) {
+      await _storage.child(collectionId).delete();
+    }
+    await _collection.doc(collectionId).delete();
+  }
 }

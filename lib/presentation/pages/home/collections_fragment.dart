@@ -42,18 +42,25 @@ class CollectionsFragment extends StatelessWidget {
             overscroll.disallowIndicator();
             return true;
           },
-          child: GridView.count(
-            padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
-            crossAxisCount: 2,
-            crossAxisSpacing: 20.0.w,
-            mainAxisSpacing: 40.0.h,
-            children: [
-              for (var collection in _collections)
-                CollectionCard(
-                  collection: collection!,
+          child: (_collections.length < 1)
+              ? Center(
+                  child: Text(
+                    'Nema kolekcija',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                )
+              : GridView.count(
+                  padding: EdgeInsets.only(top: 30.h, bottom: 30.h),
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 20.0.w,
+                  mainAxisSpacing: 40.0.h,
+                  children: [
+                    for (var collection in _collections)
+                      CollectionCard(
+                        collection: collection!,
+                      ),
+                  ],
                 ),
-            ],
-          ),
         ),
       ),
     );
