@@ -225,8 +225,7 @@ class _EditCollectionPageState extends State<EditCollectionPage> {
                                     borderRadius: BorderRadius.circular(7.r),
                                     color: backgroundColor,
                                     image: DecorationImage(
-                                      image: NetworkImage(
-                                          widget.data['coverPhotoUrl']),
+                                      image: FileImage(_coverPhoto!),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
