@@ -8,6 +8,7 @@ class MemoryModel {
   final String authorId;
   final String? coverPhotoUrl;
   final int createdAt;
+  final bool isFavorite;
 
   MemoryModel({
     required this.id,
@@ -17,6 +18,7 @@ class MemoryModel {
     required this.authorId,
     required this.coverPhotoUrl,
     required this.createdAt,
+    required this.isFavorite,
   });
 
   Map<String, dynamic> toJson() => {
@@ -27,6 +29,7 @@ class MemoryModel {
         'authorId': authorId,
         'coverPhotoUrl': coverPhotoUrl,
         'createdAt': createdAt,
+        'isFavorite': isFavorite,
       };
 
   MemoryModel.fromJson(DocumentSnapshot data)
@@ -36,5 +39,6 @@ class MemoryModel {
         collectionId = data['collectionId'],
         authorId = data['authorId'],
         coverPhotoUrl = data['coverPhotoUrl'],
-        createdAt = data['createdAt'];
+        createdAt = data['createdAt'],
+        isFavorite = data['isFavorite'];
 }

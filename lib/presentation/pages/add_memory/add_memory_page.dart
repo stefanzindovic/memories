@@ -65,13 +65,15 @@ class _AddMemoryPageState extends State<AddMemoryPage> {
       }
       print(_coverPhoto);
       final memory = MemoryModel(
-          id: memoryId,
-          title: _title,
-          story: _story,
-          collectionId: _collectionId,
-          authorId: _user!.uid,
-          coverPhotoUrl: coverPhotoUrl,
-          createdAt: DateTime.now().microsecondsSinceEpoch);
+        id: memoryId,
+        title: _title,
+        story: _story,
+        collectionId: _collectionId,
+        authorId: _user!.uid,
+        coverPhotoUrl: coverPhotoUrl,
+        createdAt: DateTime.now().microsecondsSinceEpoch,
+        isFavorite: false,
+      );
       await MemoryInformations.createNewMemory(memory);
       print('Sve je u redu.');
       status = CreateMemoryStatus.success;
