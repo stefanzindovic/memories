@@ -18,4 +18,8 @@ class MemoryInformations {
     final TaskSnapshot upload = await _storage.child(id).putFile(photo);
     return upload.ref.getDownloadURL();
   }
+
+  static Future<void> deleteMemoryCoverPhoto(String id) async {
+    await _storage.child(id).delete();
+  }
 }
