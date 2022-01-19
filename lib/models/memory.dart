@@ -7,7 +7,7 @@ class MemoryModel {
   final String? collectionId;
   final String authorId;
   final String? coverPhotoUrl;
-  final DateTime createdAt;
+  final int createdAt;
 
   MemoryModel({
     required this.id,

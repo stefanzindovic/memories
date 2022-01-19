@@ -62,7 +62,7 @@ generateTheme() {
     // input text fields style
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      errorMaxLines: 3,
+      errorMaxLines: 4,
       errorStyle: GoogleFonts.encodeSans(
         fontSize: 12.sp,
         fontWeight: FontWeight.w600,
