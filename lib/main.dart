@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:memories/presentation/app.dart';
 import 'package:memories/providers/collection_data_proivder.dart';
 import 'package:memories/providers/current_user_provider.dart';
+import 'package:memories/providers/memory_data_provider.dart';
 import 'package:memories/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,9 @@ void main() async {
           ),
           ChangeNotifierProvider(
             create: (_) => CollectionDataProvoder(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => MemoryDataProvider(),
           ),
         ],
         child: const MyApp(),

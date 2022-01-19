@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/presentation/widgets/memory_card.dart';
+import 'package:memories/repository/memory_informations.dart';
 
 class MemoriesFragment extends StatelessWidget {
   const MemoriesFragment({Key? key}) : super(key: key);

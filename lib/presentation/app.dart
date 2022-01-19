@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/presentation/widgets/authentication_wrapper.dart';
 import 'package:memories/providers/collection_data_proivder.dart';
 import 'package:memories/providers/current_user_provider.dart';
+import 'package:memories/providers/memory_data_provider.dart';
 import 'package:memories/providers/user_data_provider.dart';
 import 'package:memories/router/router.dart';
 import 'package:memories/theme/theme.dart';
@@ -16,10 +17,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     Provider.of<CurrentUserProvider>(context, listen: false).setUid();
     Provider.of<CurrentUserProvider>(context, listen: false).setCredentials();
-    Provider.of<UserDataProvider>(context, listen: false)
-        .setUserData(Provider.of<CurrentUserProvider>(context).uid.toString());
-    Provider.of<CollectionDataProvoder>(context, listen: false).setCollections(
-        Provider.of<CurrentUserProvider>(context).uid.toString());
+    final String _uid =
+        Provider.of<CurrentUserProvider>(context).uid.toString();
+    Provider.of<UserDataProvider>(context, listen: false).setUserData(_uid);
+    Provider.of<CollectionDataProvoder>(context, listen: false)
+        .setCollections(_uid);
+    Provider.of<MemoryDataProvider>(context, listen: false).setMemories(_uid);
+
     return ScreenUtilInit(
       designSize: const Size(360, 800),
       builder: () => MaterialApp(
