@@ -38,4 +38,16 @@ class MemoryInformations {
 
     return memories;
   }
+
+  static Future<void> deleteMemory(String id) async {
+    final DocumentReference memory = _collection.doc(id);
+    final DocumentSnapshot memorySnapshot = await memory.get();
+    final Map<dynamic, dynamic> data = memorySnapshot.data() as Map;
+
+    if (data['coverPhotoUrl'] != null) {
+      await deleteMemoryCoverPhoto(id);
+    }
+
+    await memory.delete();
+  }
 }
