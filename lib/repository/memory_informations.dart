@@ -22,4 +22,20 @@ class MemoryInformations {
   static Future<void> deleteMemoryCoverPhoto(String id) async {
     await _storage.child(id).delete();
   }
+
+  static Future<List<MemoryModel?>> getMemories(String uid) async {
+    List<MemoryModel?> memories = [];
+
+    final QuerySnapshot snapshots =
+        await _collection.where('authorId', isEqualTo: uid).get();
+    final List docs = snapshots.docs;
+
+    for (var doc in docs) {
+      if (doc != null) {
+        memories.add(MemoryModel.fromJson(doc));
+      }
+    }
+
+    return memories;
+  }
 }
