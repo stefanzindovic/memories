@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:memories/models/memory.dart';
@@ -10,5 +12,10 @@ class MemoryInformations {
 
   static Future<void> createNewMemory(MemoryModel memory) async {
     await _collection.doc(memory.id).set(memory.toJson());
+  }
+
+  static Future<String> uploadMemoryCoverPhoto(String id, File photo) async {
+    final TaskSnapshot upload = await _storage.child(id).putFile(photo);
+    return upload.ref.getDownloadURL();
   }
 }
