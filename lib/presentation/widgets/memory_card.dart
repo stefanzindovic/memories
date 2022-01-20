@@ -1,13 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+import 'package:memories/models/collection.dart';
+import 'package:memories/models/memory.dart';
+import 'package:memories/providers/collection_data_proivder.dart';
 import 'package:memories/theme/colors.dart';
+import 'package:provider/provider.dart';
 
-class MemoryCard extends StatelessWidget {
-  const MemoryCard({Key? key}) : super(key: key);
+class MemoryCard extends StatefulWidget {
+  final MemoryModel? memory;
+  const MemoryCard({Key? key, required this.memory}) : super(key: key);
 
   @override
+  _MemoryCardState createState() => _MemoryCardState();
+}
+
+class _MemoryCardState extends State<MemoryCard> {
+  @override
   Widget build(BuildContext context) {
+    final List<CollectionModel?> _collections =
+        Provider.of<CollectionDataProvoder>(context).collections;
+    String? _collectionTitle;
+    for (var collection in _collections) {
+      if (collection!.id == widget.memory!.collectionId) {
+        setState(() => _collectionTitle = collection.title);
+      }
+    }
     return GestureDetector(
       onTap: () {},
       child: Container(
@@ -19,21 +38,34 @@ class MemoryCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Container(
-              width: double.infinity,
-              height: 150.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(7.r),
-                color: backgroundColor,
-              ),
-              child: Align(
-                alignment: Alignment.center,
-                child: Icon(
-                  FeatherIcons.image,
-                  size: 50.w,
-                ),
-              ),
-            ),
+            (widget.memory?.coverPhotoUrl == null)
+                ? Container(
+                    width: double.infinity,
+                    height: 150.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(7.r),
+                      color: backgroundColor,
+                    ),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Icon(
+                        FeatherIcons.image,
+                        size: 50.w,
+                      ),
+                    ),
+                  )
+                : Container(
+                    width: double.infinity,
+                    height: 150.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(7.r),
+                      color: backgroundColor,
+                      image: DecorationImage(
+                        image: NetworkImage(widget.memory!.coverPhotoUrl!),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
             SizedBox(
               height: 10.h,
             ),
@@ -44,15 +76,17 @@ class MemoryCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Naslov kolekcije',
+                    widget.memory!.title,
                     style: Theme.of(context).textTheme.headline3,
                   ),
                   IconButton(
                     onPressed: () {},
-                    icon: const Icon(
+                    icon: Icon(
                       FeatherIcons.heart,
                       size: 25,
-                      color: lightColor,
+                      color: (widget.memory!.isFavorite == true)
+                          ? lightColor
+                          : textColor,
                     ),
                   )
                 ],
@@ -73,60 +107,70 @@ class MemoryCard extends StatelessWidget {
                     children: [
                       Icon(
                         FeatherIcons.calendar,
-                        size: 20.w,
+                        size: 25,
                         color: textColor,
                       ),
+                      SizedBox(width: 5.w),
                       SizedBox(
-                        width: 5.w,
-                      ),
-                      Text(
-                        '02-01-2022',
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyText1,
+                        width:
+                            ((MediaQuery.of(context).size.width - 40.w) / 3) -
+                                50.w,
+                        child: Text(
+                          DateFormat('dd-MM-yy').format(
+                            DateTime.fromMicrosecondsSinceEpoch(
+                                widget.memory!.createdAt),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
                       ),
                     ],
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(
-                        width: 20.w,
-                      ),
                       Icon(
                         FeatherIcons.clock,
-                        size: 20.w,
+                        size: 25,
                         color: textColor,
                       ),
+                      SizedBox(width: 5.w),
                       SizedBox(
-                        width: 5.w,
-                      ),
-                      Text(
-                        '17:13',
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                      SizedBox(
-                        width: 20.w,
+                        width:
+                            ((MediaQuery.of(context).size.width - 40.w) / 3) -
+                                50.w,
+                        child: Text(
+                          DateFormat('HH:mm').format(
+                            DateTime.fromMicrosecondsSinceEpoch(
+                                widget.memory!.createdAt),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
                       ),
                     ],
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Icon(
                         FeatherIcons.grid,
-                        size: 20.w,
+                        size: 25,
                         color: textColor,
                       ),
+                      SizedBox(width: 5.w),
                       SizedBox(
-                        width: 5.w,
-                      ),
-                      Text(
-                        'Doktor',
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyText1,
+                        width:
+                            ((MediaQuery.of(context).size.width - 40.w) / 3) -
+                                50.w,
+                        child: Text(
+                          _collectionTitle ?? 'Opšte',
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
                       ),
                     ],
                   ),
@@ -139,7 +183,7 @@ class MemoryCard extends StatelessWidget {
               child: SizedBox(
                 height: 108.h,
                 child: Text(
-                  'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book...Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
+                  widget.memory!.story,
                   overflow: TextOverflow.ellipsis,
                   softWrap: true,
                   maxLines: 5,
