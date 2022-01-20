@@ -41,7 +41,6 @@ class _CollectionPageState extends State<CollectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(editInfo?['coverPhotoUrl'] == null);
     return Scaffold(
       appBar: AppBar(
         title: Text(

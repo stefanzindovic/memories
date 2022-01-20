@@ -335,80 +335,81 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
                 GestureDetector(
                   onTap: () async {
                     showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            backgroundColor: backgroundColor,
-                            title: Text(
-                              'Da li želite da deaktivirate vaš korisnički račun?',
-                              style: GoogleFonts.encodeSans(
-                                color: lightColor,
-                                fontWeight: FontWeight.w700,
-                              ),
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          backgroundColor: backgroundColor,
+                          title: Text(
+                            'Da li želite da deaktivirate vaš korisnički račun?',
+                            style: GoogleFonts.encodeSans(
+                              color: lightColor,
+                              fontWeight: FontWeight.w700,
                             ),
-                            content: Text(
-                              'U slučaju deaktivacije vašeg korisničkog računa, nepovratno čće biti obrisanji svi vaši podaci iz naše baze podataka uknjučujući sve vaše kolekcije i uspomene. Ako ste sigurni da želite da deaktivirate vaš korisnički račun, potvrdite to pomoću dugmeta "Nastavite"',
-                              style: GoogleFonts.encodeSans(
-                                color: textColor,
-                                fontWeight: FontWeight.w400,
-                              ),
+                          ),
+                          content: Text(
+                            'U slučaju deaktivacije vašeg korisničkog računa, nepovratno čće biti obrisanji svi vaši podaci iz naše baze podataka uknjučujući sve vaše kolekcije i uspomene. Ako ste sigurni da želite da deaktivirate vaš korisnički račun, potvrdite to pomoću dugmeta "Nastavite"',
+                            style: GoogleFonts.encodeSans(
+                              color: textColor,
+                              fontWeight: FontWeight.w400,
                             ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {},
-                                child: Text('Odustanite'),
-                                style: TextButton.styleFrom(
-                                  primary: lightColor,
-                                  textStyle: GoogleFonts.encodeSans(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {},
+                              child: Text('Odustanite'),
+                              style: TextButton.styleFrom(
+                                primary: lightColor,
+                                textStyle: GoogleFonts.encodeSans(
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  setState(() => deleteAccountStatus =
-                                      DeleteAccountStatus.loading);
-                                  final DeleteAccountStatus result =
-                                      await deleteUserAccount();
-                                  if (result == DeleteAccountStatus.success) {
-                                    await SecureStorage
-                                        .deleteUserCredentialFromStorage();
-                                    Navigator.pushNamedAndRemoveUntil(
-                                        context, '/sign-in', (route) => false);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: backgroundColor,
-                                        content: Text(
-                                          'Uspješno ste deaktivirali vaš korisnički račun. Sve vaše informacije su sada trajno obrisane.',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText2,
-                                        ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
+                                setState(() => deleteAccountStatus =
+                                    DeleteAccountStatus.loading);
+                                final DeleteAccountStatus result =
+                                    await deleteUserAccount();
+                                if (result == DeleteAccountStatus.success) {
+                                  await SecureStorage
+                                      .deleteUserCredentialFromStorage();
+                                  Navigator.pushNamedAndRemoveUntil(
+                                      context, '/sign-in', (route) => false);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: backgroundColor,
+                                      content: Text(
+                                        'Uspješno ste deaktivirali vaš korisnički račun. Sve vaše informacije su sada trajno obrisane.',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2,
                                       ),
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: backgroundColor,
-                                        content: Text(
-                                          errorMessage.toString(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyText2,
-                                        ),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: backgroundColor,
+                                      content: Text(
+                                        errorMessage.toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2,
                                       ),
-                                    );
-                                  }
-                                  setState(() => deleteAccountStatus =
-                                      DeleteAccountStatus.initial);
-                                },
-                                child: Text('Nastavite'),
-                                style: ElevatedButton.styleFrom(
-                                    primary: errorColor),
-                              ),
-                            ],
-                          );
-                        });
+                                    ),
+                                  );
+                                }
+                                setState(() => deleteAccountStatus =
+                                    DeleteAccountStatus.initial);
+                              },
+                              child: Text('Nastavite'),
+                              style:
+                                  ElevatedButton.styleFrom(primary: errorColor),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                   child: Container(
                     width: double.infinity,

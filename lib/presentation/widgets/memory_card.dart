@@ -28,7 +28,13 @@ class _MemoryCardState extends State<MemoryCard> {
       }
     }
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        print(_collectionTitle);
+        Navigator.pushNamed(context, '/memory', arguments: {
+          'data': widget.memory!.toJson(),
+          'collection_name': _collectionTitle,
+        });
+      },
       child: Container(
         width: double.infinity,
         height: 372.h,
@@ -75,9 +81,13 @@ class _MemoryCardState extends State<MemoryCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    widget.memory!.title,
-                    style: Theme.of(context).textTheme.headline3,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width - 120.w,
+                    child: Text(
+                      widget.memory!.title,
+                      style: Theme.of(context).textTheme.headline3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   IconButton(
                     onPressed: () {},

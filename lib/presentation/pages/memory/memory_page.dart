@@ -1,23 +1,131 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:memories/repository/memory_informations.dart';
 import 'package:memories/theme/colors.dart';
 
-class MemoryPage extends StatelessWidget {
-  const MemoryPage({Key? key}) : super(key: key);
+enum DeleteMemoryStatus {
+  initial,
+  loading,
+  success,
+  error,
+}
+
+class MemoryPage extends StatefulWidget {
+  final Map data;
+  const MemoryPage({
+    Key? key,
+    required this.data,
+  }) : super(key: key);
+
+  @override
+  _MemoryPageState createState() => _MemoryPageState();
+}
+
+class _MemoryPageState extends State<MemoryPage> {
+  String? errorMessage;
+  DeleteMemoryStatus _deleteMemoryStatus = DeleteMemoryStatus.initial;
+
+  Future<DeleteMemoryStatus> _deleteMemory() async {
+    DeleteMemoryStatus status = _deleteMemoryStatus;
+    try {
+      await MemoryInformations.deleteMemory(widget.data['data']['id']);
+      print('Sve je u redu');
+      status = DeleteMemoryStatus.success;
+    } catch (e) {
+      print(e);
+      status = DeleteMemoryStatus.error;
+      errorMessage =
+          'Došlo je do neočekivane greške pri brisanju ove uspomene. Molimo vas da pokušate ponovo.';
+    }
+    return status;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Naslov uspomene',
+        title: Text(
+          widget.data['data']['title'],
           overflow: TextOverflow.fade,
         ),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10.w),
             child: PopupMenuButton(
+              onSelected: (value) {
+                switch (value) {
+                  case 'delete-memory':
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          backgroundColor: backgroundColor,
+                          title: Text(
+                            'Da li želite da obrišete uspomenu "${widget.data['data']['title']}"?',
+                            style: GoogleFonts.encodeSans(
+                              color: lightColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          content: Text(
+                            'U slučaju brisanja ove uspomene, sve informacije koje su vezane za nju će biti trajno obrisani. Ako ste sigurni da želite da obrišete ovu uspomenu koristite dugme "Nastavite"',
+                            style: GoogleFonts.encodeSans(
+                              color: textColor,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Odustanite'),
+                              style: TextButton.styleFrom(
+                                primary: lightColor,
+                                textStyle: GoogleFonts.encodeSans(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
+                                setState(() => _deleteMemoryStatus =
+                                    DeleteMemoryStatus.loading);
+                                final DeleteMemoryStatus status =
+                                    await _deleteMemory();
+                                if (status == DeleteMemoryStatus.error) {
+                                } else if (status ==
+                                    DeleteMemoryStatus.success) {
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: backgroundColor,
+                                      content: Text(
+                                        'Uspomena "${widget.data['data']['title']} je uspješno obrisana"',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                setState(() => _deleteMemoryStatus =
+                                    DeleteMemoryStatus.initial);
+                              },
+                              child: Text('Nastavite'),
+                              style:
+                                  ElevatedButton.styleFrom(primary: errorColor),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                }
+              },
               child: Icon(
                 FeatherIcons.moreVertical,
                 size: 30.w,
@@ -41,7 +149,7 @@ class MemoryPage extends StatelessWidget {
                   ),
                 ),
                 PopupMenuItem(
-                  value: 'edit-memory',
+                  value: 'delete-memory',
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -78,21 +186,35 @@ class MemoryPage extends StatelessWidget {
                 SizedBox(
                   height: 50.h,
                 ),
-                Container(
-                  width: double.infinity,
-                  height: 150.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(7.r),
-                    color: backgroundColor,
-                  ),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Icon(
-                      FeatherIcons.image,
-                      size: 50.w,
-                    ),
-                  ),
-                ),
+                (widget.data['data']['coverPhotoUrl'] == null)
+                    ? Container(
+                        width: double.infinity,
+                        height: 150.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(7.r),
+                          color: backgroundColor,
+                        ),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Icon(
+                            FeatherIcons.image,
+                            size: 50.w,
+                          ),
+                        ),
+                      )
+                    : Container(
+                        width: double.infinity,
+                        height: 150.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(7.r),
+                          color: backgroundColor,
+                          image: DecorationImage(
+                            image: NetworkImage(
+                                widget.data['data']['coverPhotoUrl']),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                 SizedBox(
                   height: 20.h,
                 ),
@@ -107,57 +229,72 @@ class MemoryPage extends StatelessWidget {
                         children: [
                           Icon(
                             FeatherIcons.calendar,
-                            size: 20.w,
-                            color: lightColor,
+                            size: 25,
+                            color: textColor,
                           ),
+                          SizedBox(width: 5.w),
                           SizedBox(
-                            width: 5.w,
-                          ),
-                          const Text(
-                            '02-01-2022',
-                            overflow: TextOverflow.ellipsis,
+                            width: ((MediaQuery.of(context).size.width - 40.w) /
+                                    3) -
+                                50.w,
+                            child: Text(
+                              DateFormat('dd-MM-yy').format(
+                                DateTime.fromMicrosecondsSinceEpoch(
+                                  widget.data['data']['createdAt'],
+                                ),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
                           ),
                         ],
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            width: 20.w,
-                          ),
                           Icon(
                             FeatherIcons.clock,
-                            size: 20.w,
-                            color: lightColor,
+                            size: 25,
+                            color: textColor,
                           ),
+                          SizedBox(width: 5.w),
                           SizedBox(
-                            width: 5.w,
-                          ),
-                          const Text(
-                            '17:13',
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          SizedBox(
-                            width: 20.w,
+                            width: ((MediaQuery.of(context).size.width - 40.w) /
+                                    3) -
+                                50.w,
+                            child: Text(
+                              DateFormat('HH:mm').format(
+                                DateTime.fromMicrosecondsSinceEpoch(
+                                  widget.data['data']['createdAt'],
+                                ),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
                           ),
                         ],
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Icon(
                             FeatherIcons.grid,
-                            size: 20.w,
-                            color: lightColor,
+                            size: 25,
+                            color: textColor,
                           ),
+                          SizedBox(width: 5.w),
                           SizedBox(
-                            width: 5.w,
-                          ),
-                          const Text(
-                            'Doktor',
-                            overflow: TextOverflow.ellipsis,
+                            width: ((MediaQuery.of(context).size.width - 40.w) /
+                                    3) -
+                                50.w,
+                            child: Text(
+                              widget.data['collection_name'] ?? 'Opšte',
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
                           ),
                         ],
                       ),
@@ -168,7 +305,7 @@ class MemoryPage extends StatelessWidget {
                   height: 20.h,
                 ),
                 Text(
-                  'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using "Content here, content here", making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for "lorem ipsum" will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.\n\n The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using "Content here, content here", making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for "lorem ipsum" will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).\n\nIt is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using "Content here, content here", making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for "lorem ipsum" will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).',
+                  widget.data['data']['story'],
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 SizedBox(
