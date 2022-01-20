@@ -13,6 +13,13 @@ enum DeleteMemoryStatus {
   error,
 }
 
+enum ChangeMemoryFavoriteStatusStatus {
+  initial,
+  loading,
+  success,
+  error,
+}
+
 class MemoryPage extends StatefulWidget {
   final Map data;
   const MemoryPage({
@@ -27,6 +34,29 @@ class MemoryPage extends StatefulWidget {
 class _MemoryPageState extends State<MemoryPage> {
   String? errorMessage;
   DeleteMemoryStatus _deleteMemoryStatus = DeleteMemoryStatus.initial;
+  ChangeMemoryFavoriteStatusStatus _hangeMemoryFavoriteStatusStatus =
+      ChangeMemoryFavoriteStatusStatus.initial;
+
+  Future<ChangeMemoryFavoriteStatusStatus> _changeMemoryFavoriteState() async {
+    ChangeMemoryFavoriteStatusStatus status = _hangeMemoryFavoriteStatusStatus;
+    try {
+      await MemoryInformations.changeMemoryFavoriteState(
+          widget.data['data']['id'], !widget.data['data']['isFavorite']);
+      status = ChangeMemoryFavoriteStatusStatus.success;
+      print('Sve je u redu!');
+    } catch (e) {
+      print(e);
+      if (widget.data['data']['isFavorite'] == true) {
+        errorMessage =
+            'Došlo je do neočekivane greške pri uklanjanju ove uspomene sa liste vaših najdražih uspomena. Molimo vas da pokušate ponovo.';
+      } else {
+        errorMessage =
+            'Došlo je do neočekivane greške pri dodavanju ove uspomene na listu vaših najdražih uspomena. Molimo vas da pokušate ponovo.';
+      }
+      status = ChangeMemoryFavoriteStatusStatus.error;
+    }
+    return status;
+  }
 
   Future<DeleteMemoryStatus> _deleteMemory() async {
     DeleteMemoryStatus status = _deleteMemoryStatus;
@@ -49,14 +79,36 @@ class _MemoryPageState extends State<MemoryPage> {
       appBar: AppBar(
         title: Text(
           widget.data['data']['title'],
-          overflow: TextOverflow.fade,
+          overflow: TextOverflow.ellipsis,
         ),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10.w),
             child: PopupMenuButton(
-              onSelected: (value) {
+              onSelected: (value) async {
                 switch (value) {
+                  case 'favorite-memory':
+                    final ChangeMemoryFavoriteStatusStatus result =
+                        await _changeMemoryFavoriteState();
+                    if (result == ChangeMemoryFavoriteStatusStatus.success) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: backgroundColor,
+                          content: (widget.data['data']['isFavorite'] == false)
+                              ? Text(
+                                  'Uspomena "${widget.data['data']['title']}" je uspješno dodata na listi vaših omiljenih uspomena',
+                                  style: Theme.of(context).textTheme.bodyText2,
+                                )
+                              : Text(
+                                  'Uspomena "${widget.data['data']['title']}" je uspješno obrisana sa liste vaših omiljenih uspomena',
+                                  style: Theme.of(context).textTheme.bodyText2,
+                                ),
+                        ),
+                      );
+                    }
+                    break;
+
                   case 'delete-memory':
                     showDialog(
                       context: context,
@@ -124,6 +176,7 @@ class _MemoryPageState extends State<MemoryPage> {
                         );
                       },
                     );
+                    break;
                 }
               },
               child: Icon(
@@ -131,6 +184,25 @@ class _MemoryPageState extends State<MemoryPage> {
                 size: 30.w,
               ),
               itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'favorite-memory',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        FeatherIcons.heart,
+                        size: 24.w,
+                      ),
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                      (widget.data['data']['isFavorite'] == true)
+                          ? const Text('Uklonite iz omiljenih')
+                          : const Text('Dodajte u omiljene'),
+                    ],
+                  ),
+                ),
                 PopupMenuItem(
                   value: 'edit-memory',
                   child: Row(
