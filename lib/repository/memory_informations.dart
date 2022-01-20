@@ -39,6 +39,42 @@ class MemoryInformations {
     return memories;
   }
 
+  static Future<List<MemoryModel?>> getMemoriesByCollection(
+      String uid, String id) async {
+    List<MemoryModel?> memories = [];
+
+    final QuerySnapshot snapshots = await _collection
+        .where('authorId', isEqualTo: uid)
+        .where('collectionId', isEqualTo: id)
+        .get();
+    final List docs = snapshots.docs;
+
+    for (var doc in docs) {
+      if (doc != null) {
+        memories.add(MemoryModel.fromJson(doc));
+      }
+    }
+    return memories;
+  }
+
+  static Future<List<MemoryModel?>> getMemoriesByFavoriteStatus(
+      String uid) async {
+    List<MemoryModel?> memories = [];
+
+    final QuerySnapshot snapshots = await _collection
+        .where('authorId', isEqualTo: uid)
+        .where('isFavorite', isEqualTo: true)
+        .get();
+    final List docs = snapshots.docs;
+
+    for (var doc in docs) {
+      if (doc != null) {
+        memories.add(MemoryModel.fromJson(doc));
+      }
+    }
+    return memories;
+  }
+
   static Future<void> deleteMemory(String id) async {
     final DocumentReference memory = _collection.doc(id);
     final DocumentSnapshot memorySnapshot = await memory.get();

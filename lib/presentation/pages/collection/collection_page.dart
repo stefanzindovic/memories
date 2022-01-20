@@ -3,8 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:memories/presentation/widgets/memory_card.dart';
+import 'package:memories/providers/current_user_provider.dart';
+import 'package:memories/providers/memory_data_provider.dart';
 import 'package:memories/repository/collections_informations.dart';
 import 'package:memories/theme/colors.dart';
+import 'package:provider/provider.dart';
 
 enum DeleteCollectionStatus {
   initial,
@@ -41,6 +45,23 @@ class _CollectionPageState extends State<CollectionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final String _uid =
+        Provider.of<CurrentUserProvider>(context).uid.toString();
+    Provider.of<MemoryDataProvider>(context)
+        .setMemoriesByCollection(_uid, widget.data['id']);
+    final memories =
+        Provider.of<MemoryDataProvider>(context).collectionMemories;
+
+    final List<Widget> _memoryCardsList = [];
+
+    for (var memory in memories.reversed) {
+      _memoryCardsList.add(MemoryCard(memory: memory));
+      _memoryCardsList.add(
+        SizedBox(
+          height: 20.h,
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -182,9 +203,12 @@ class _CollectionPageState extends State<CollectionPage> {
                 SizedBox(
                   height: 20.h,
                 ),
-                const Text('2 uspomene'),
+                Text('${memories.length} uspomene'),
                 SizedBox(
                   height: 20.h,
+                ),
+                Column(
+                  children: _memoryCardsList,
                 ),
               ],
             ),

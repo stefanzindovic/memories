@@ -23,6 +23,8 @@ class MyApp extends StatelessWidget {
     Provider.of<CollectionDataProvoder>(context, listen: false)
         .setCollections(_uid);
     Provider.of<MemoryDataProvider>(context, listen: false).setMemories(_uid);
+    Provider.of<MemoryDataProvider>(context, listen: false)
+        .setFavoriteMemories(_uid);
 
     return ScreenUtilInit(
       designSize: const Size(360, 800),

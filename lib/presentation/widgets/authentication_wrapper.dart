@@ -16,10 +16,10 @@ class AuthenticationWrapper extends StatelessWidget {
       return const SigninPage();
     } else {
       final _userData = Provider.of<UserDataProvider>(context).userData;
-      if (_userData == null) {
-        return const MoreInfoPage();
-      } else {
+      if (_userData != null) {
         return const HomePage();
+      } else {
+        return const MoreInfoPage();
       }
     }
   }
