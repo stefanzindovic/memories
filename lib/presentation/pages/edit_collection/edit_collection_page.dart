@@ -97,45 +97,45 @@ class _EditCollectionPageState extends State<EditCollectionPage> {
           Padding(
             padding: EdgeInsets.only(right: 10.w),
             child: IconButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    setState(() => _updateCollectionStatus =
-                        UpdateCollectionStatus.loading);
-                    final UpdateCollectionStatus result =
-                        await _updateCollection();
-                    if (result == UpdateCollectionStatus.success) {
-                      //print("Kolekcija ${_collection!.toJson()}");
-                      Navigator.pop(
-                        context,
-                        _collection!.toJson(),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: backgroundColor,
-                          content: Text(
-                            'Uspješno ste izmijenili informacije o kolekciji "${_title}".',
-                            style: Theme.of(context).textTheme.bodyText2,
-                          ),
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  setState(() =>
+                      _updateCollectionStatus = UpdateCollectionStatus.loading);
+                  final UpdateCollectionStatus result =
+                      await _updateCollection();
+                  if (result == UpdateCollectionStatus.success) {
+                    //print("Kolekcija ${_collection!.toJson()}");
+                    Navigator.pop(
+                      context,
+                      _collection!.toJson(),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: backgroundColor,
+                        content: Text(
+                          'Uspješno ste izmijenili informacije o kolekciji "${_title}".',
+                          style: Theme.of(context).textTheme.bodyText2,
                         ),
-                      );
-                    }
-                    setState(() => _updateCollectionStatus =
-                        UpdateCollectionStatus.initial);
+                      ),
+                    );
                   }
-                },
-                icon:
-                    (_updateCollectionStatus == UpdateCollectionStatus.loading)
-                        ? SizedBox(
-                            width: 24.w,
-                            height: 24.h,
-                            child: const CircularProgressIndicator(
-                              color: lightColor,
-                            ),
-                          )
-                        : Icon(
-                            FeatherIcons.check,
-                            size: 30.w,
-                          )),
+                  setState(() =>
+                      _updateCollectionStatus = UpdateCollectionStatus.initial);
+                }
+              },
+              icon: (_updateCollectionStatus == UpdateCollectionStatus.loading)
+                  ? SizedBox(
+                      width: 24.w,
+                      height: 24.h,
+                      child: const CircularProgressIndicator(
+                        color: lightColor,
+                      ),
+                    )
+                  : Icon(
+                      FeatherIcons.check,
+                      size: 30.w,
+                    ),
+            ),
           ),
         ],
       ),

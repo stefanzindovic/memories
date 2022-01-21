@@ -3,8 +3,12 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:memories/models/collection.dart';
+import 'package:memories/providers/collection_data_proivder.dart';
+import 'package:memories/repository/collections_informations.dart';
 import 'package:memories/repository/memory_informations.dart';
 import 'package:memories/theme/colors.dart';
+import 'package:provider/provider.dart';
 
 enum DeleteMemoryStatus {
   initial,
@@ -34,11 +38,12 @@ class MemoryPage extends StatefulWidget {
 class _MemoryPageState extends State<MemoryPage> {
   String? errorMessage;
   DeleteMemoryStatus _deleteMemoryStatus = DeleteMemoryStatus.initial;
-  ChangeMemoryFavoriteStatusStatus _hangeMemoryFavoriteStatusStatus =
+  ChangeMemoryFavoriteStatusStatus _changeMemoryFavoriteStatusStatus =
       ChangeMemoryFavoriteStatusStatus.initial;
+  Map? editedInfo;
 
   Future<ChangeMemoryFavoriteStatusStatus> _changeMemoryFavoriteState() async {
-    ChangeMemoryFavoriteStatusStatus status = _hangeMemoryFavoriteStatusStatus;
+    ChangeMemoryFavoriteStatusStatus status = _changeMemoryFavoriteStatusStatus;
     try {
       await MemoryInformations.changeMemoryFavoriteState(
           widget.data['data']['id'], !widget.data['data']['isFavorite']);
@@ -75,18 +80,31 @@ class _MemoryPageState extends State<MemoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    String? _collectionTitle = widget.data['collection_name'];
+
+    if (editedInfo != null &&
+        widget.data['data']['collectionId'] != editedInfo?['collectionId']) {
+      final List<CollectionModel?> _collections =
+          Provider.of<CollectionDataProvoder>(context).collections;
+      for (var collection in _collections) {
+        if (collection!.id == editedInfo?['collectionId']) {
+          setState(() => _collectionTitle = collection.title);
+        }
+      }
+    }
+    print(widget.data);
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.data['data']['title'],
+          editedInfo?['title'] ?? widget.data['data']['title'],
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10.w),
             child: PopupMenuButton(
-              onSelected: (value) async {
-                switch (value) {
+              onSelected: (result) async {
+                switch (result) {
                   case 'favorite-memory':
                     final ChangeMemoryFavoriteStatusStatus result =
                         await _changeMemoryFavoriteState();
@@ -97,15 +115,25 @@ class _MemoryPageState extends State<MemoryPage> {
                           backgroundColor: backgroundColor,
                           content: (widget.data['data']['isFavorite'] == false)
                               ? Text(
-                                  'Uspomena "${widget.data['data']['title']}" je uspješno dodata na listi vaših omiljenih uspomena',
+                                  'Uspomena "${editedInfo?['title'] ?? widget.data['data']['title']}" je uspješno dodata na listi vaših omiljenih uspomena',
                                   style: Theme.of(context).textTheme.bodyText2,
                                 )
                               : Text(
-                                  'Uspomena "${widget.data['data']['title']}" je uspješno obrisana sa liste vaših omiljenih uspomena',
+                                  'Uspomena "${editedInfo?['title'] ?? widget.data['data']['title']}" je uspješno obrisana sa liste vaših omiljenih uspomena',
                                   style: Theme.of(context).textTheme.bodyText2,
                                 ),
                         ),
                       );
+                    }
+                    break;
+                  case 'edit-memory':
+                    editedInfo = await Navigator.pushNamed(
+                        context, '/edit-memory',
+                        arguments: editedInfo ?? widget.data['data']) as Map?;
+                    setState(() => editedInfo = editedInfo);
+                    if (editedInfo != null) {
+                      widget.data['data']['coverPhotoUrl'] =
+                          editedInfo?['coverPhotoUrl'];
                     }
                     break;
 
@@ -116,7 +144,7 @@ class _MemoryPageState extends State<MemoryPage> {
                         return AlertDialog(
                           backgroundColor: backgroundColor,
                           title: Text(
-                            'Da li želite da obrišete uspomenu "${widget.data['data']['title']}"?',
+                            'Da li želite da obrišete uspomenu "${editedInfo?['title'] ?? widget.data['data']['title']}"?',
                             style: GoogleFonts.encodeSans(
                               color: lightColor,
                               fontWeight: FontWeight.w700,
@@ -157,7 +185,7 @@ class _MemoryPageState extends State<MemoryPage> {
                                     SnackBar(
                                       backgroundColor: backgroundColor,
                                       content: Text(
-                                        'Uspomena "${widget.data['data']['title']} je uspješno obrisana"',
+                                        'Uspomena "${editedInfo?['title'] ?? widget.data['data']['title']} je uspješno obrisana"',
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText2,
@@ -258,7 +286,8 @@ class _MemoryPageState extends State<MemoryPage> {
                 SizedBox(
                   height: 50.h,
                 ),
-                (widget.data['data']['coverPhotoUrl'] == null)
+                (widget.data['data']['coverPhotoUrl'] == null &&
+                        editedInfo?['coverPhotoUrl'] == null)
                     ? Container(
                         width: double.infinity,
                         height: 150.h,
@@ -281,7 +310,7 @@ class _MemoryPageState extends State<MemoryPage> {
                           borderRadius: BorderRadius.circular(7.r),
                           color: backgroundColor,
                           image: DecorationImage(
-                            image: NetworkImage(
+                            image: NetworkImage(editedInfo?['coverPhotoUrl'] ??
                                 widget.data['data']['coverPhotoUrl']),
                             fit: BoxFit.cover,
                           ),
@@ -362,7 +391,7 @@ class _MemoryPageState extends State<MemoryPage> {
                                     3) -
                                 50.w,
                             child: Text(
-                              widget.data['collection_name'] ?? 'Opšte',
+                              _collectionTitle ?? 'Opšte',
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.bodyText1,
@@ -377,7 +406,7 @@ class _MemoryPageState extends State<MemoryPage> {
                   height: 20.h,
                 ),
                 Text(
-                  widget.data['data']['story'],
+                  editedInfo?['story'] ?? widget.data['data']['story'],
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 SizedBox(

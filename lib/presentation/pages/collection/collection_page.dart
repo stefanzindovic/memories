@@ -63,8 +63,6 @@ class _CollectionPageState extends State<CollectionPage> {
       );
     }
 
-    setState(() => editInfo = widget.data);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(

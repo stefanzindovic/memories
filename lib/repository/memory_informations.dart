@@ -87,7 +87,7 @@ class MemoryInformations {
     await memory.delete();
   }
 
-  static Future<void> uploadMemory(MemoryModel data) async {
+  static Future<void> updateMemory(MemoryModel data) async {
     await _collection.doc(data.id).update(data.toJson());
   }
 
