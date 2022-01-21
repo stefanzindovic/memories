@@ -56,7 +56,6 @@ class CollectionCard extends StatelessWidget {
                     ),
                   ),
                 ),
-          SizedBox(height: 3.h),
           Text(
             collection.title,
             style: Theme.of(context).textTheme.headline3,

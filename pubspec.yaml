@@ -40,6 +40,7 @@ dependencies:
     flutter_secure_storage: ^5.0.2
     google_fonts: ^2.1.1
     image_picker: ^0.8.4+4
+    intl: ^0.17.0
     provider: ^6.0.2
 
 dev_dependencies:
@@ -50,14 +51,23 @@ dev_dependencies:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter.
+flutter_native_splash:
+    #platforms
+    android: true
+    ios: false
+    web: false
+    #background color
+    color: '#0D2033'
+    #background image (logo)
+    image: assets/logo.png
 flutter:
     # The following line ensures that the Material Icons font is
     # included with your application, so that you can use the icons in
     # the material Icons class.
     uses-material-design: true
     # To add assets to your application, add an assets section, like this:
-    #assets:
-    #   - images/a_dot_ham.jpeg
+    assets:
+        - assets/
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/assets-and-images/#resolution-aware.
     # For details regarding adding assets from package dependencies, see

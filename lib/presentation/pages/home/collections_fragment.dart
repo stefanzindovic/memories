@@ -56,7 +56,7 @@ class CollectionsFragment extends StatelessWidget {
                   crossAxisSpacing: 20.0.w,
                   mainAxisSpacing: 40.0.h,
                   children: [
-                    for (var collection in _collections)
+                    for (var collection in _collections.reversed)
                       CollectionCard(
                         collection: collection!,
                       ),

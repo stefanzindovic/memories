@@ -3,7 +3,9 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:memories/models/collection.dart';
+import 'package:memories/models/memory.dart';
 import 'package:memories/providers/collection_data_proivder.dart';
+import 'package:memories/providers/memory_data_provider.dart';
 import 'package:memories/providers/user_data_provider.dart';
 import 'package:memories/theme/colors.dart';
 import 'package:provider/provider.dart';
@@ -13,9 +15,13 @@ class ProfileFragment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _favoriteMemories =
+        Provider.of<MemoryDataProvider>(context).favoriteMemories;
     final _user = Provider.of<UserDataProvider>(context).userData;
     final List<CollectionModel?> _collections =
         Provider.of<CollectionDataProvoder>(context).collections;
+    final List<MemoryModel?> _memories =
+        Provider.of<MemoryDataProvider>(context).memories;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -96,7 +102,7 @@ class ProfileFragment extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          '5',
+                          _memories.length.toString(),
                           style: GoogleFonts.encodeSans(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
@@ -116,7 +122,7 @@ class ProfileFragment extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          '5',
+                          _favoriteMemories.length.toString(),
                           style: GoogleFonts.encodeSans(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
