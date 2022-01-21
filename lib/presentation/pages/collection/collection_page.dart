@@ -62,6 +62,9 @@ class _CollectionPageState extends State<CollectionPage> {
         ),
       );
     }
+
+    setState(() => editInfo = widget.data);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -76,10 +79,13 @@ class _CollectionPageState extends State<CollectionPage> {
                 switch (result) {
                   case 'edit-collection':
                     editInfo = await Navigator.pushNamed(
-                        context, '/edit-collection',
-                        arguments: editInfo ?? widget.data) as Map;
-                    setState(() => editInfo = editInfo!);
-                    widget.data['coverPhotoUrl'] = editInfo?['coverPhotoUrl'];
+                            context, '/edit-collection',
+                            arguments: editInfo ?? widget.data)
+                        as Map<dynamic, dynamic>?;
+                    setState(() => editInfo = editInfo);
+                    if (editInfo != null) {
+                      widget.data['coverPhotoUrl'] = editInfo?['coverPhotoUrl'];
+                    }
                     break;
                   case 'delete-collection':
                     final DeleteCollectionStatus result =

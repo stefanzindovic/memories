@@ -387,6 +387,7 @@ class _AddMemoryPageState extends State<AddMemoryPage> {
                         textCapitalization: TextCapitalization.sentences,
                         minLines: 5,
                         maxLines: 5,
+                        maxLength: 1000000,
                         style: const TextStyle(
                           color: lightColor,
                         ),
