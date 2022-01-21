@@ -30,15 +30,6 @@ class UserInformations {
     return upload.ref.getDownloadURL();
   }
 
-  static Future<void> deleteUserAccount() async {
-    final userData = await getUserInfo(_auth.currentUser!.uid);
-    if (userData?.profilePhotoUrl != null) {
-      await _storage.child(_auth.currentUser!.uid).delete();
-    }
-    await _collection.doc(_auth.currentUser!.uid).delete();
-    await _auth.currentUser!.delete();
-  }
-
   static Future<void> deleteUserProfilePictureFromStorage(String uid) async {
     await _storage.child(uid).delete();
   }
