@@ -40,4 +40,8 @@ class UserInformations {
         UserModel(uid: uid, name: name, profilePhotoUrl: profilePictureUrl);
     await _collection.doc(uid).update(_user.toJson());
   }
+
+  static Future<void> deleteUserAccount() async {
+    await _auth.currentUser!.delete();
+  }
 }
