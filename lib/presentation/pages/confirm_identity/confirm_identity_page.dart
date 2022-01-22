@@ -2,7 +2,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:memories/models/collection.dart';
+import 'package:memories/models/memory.dart';
+import 'package:memories/models/user.dart';
+import 'package:memories/providers/collection_data_proivder.dart';
 import 'package:memories/providers/current_user_provider.dart';
+import 'package:memories/providers/memory_data_provider.dart';
+import 'package:memories/providers/user_data_provider.dart';
+import 'package:memories/repository/collections_informations.dart';
+import 'package:memories/repository/memory_informations.dart';
+import 'package:memories/repository/secure_storage.dart';
+import 'package:memories/repository/user_authentication.dart';
+import 'package:memories/repository/user_informations.dart';
 import 'package:memories/theme/colors.dart';
 import 'package:provider/provider.dart';
 
@@ -29,20 +41,23 @@ class ConfirmIdentityPage extends StatefulWidget {
 
 class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
   String _password = '';
-  String _email = '';
+  String? _email;
   String? errorMessage;
   RefreshUserAuthenticationStatus _refreshUserAuthenticationStatus =
       RefreshUserAuthenticationStatus.initial;
   DeleteUserAccountStatus _deleteUserAccountStatus =
       DeleteUserAccountStatus.initial;
   final _formKey = GlobalKey<FormState>();
+  List<CollectionModel?> _collections = [];
+  List<MemoryModel?> _memories = [];
+  UserModel? _user;
 
   Future<RefreshUserAuthenticationStatus> refreshUserAuthentication() async {
     RefreshUserAuthenticationStatus status =
         RefreshUserAuthenticationStatus.initial;
     try {
       await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: _email, password: _password);
+          .signInWithEmailAndPassword(email: _email!, password: _password);
       status = RefreshUserAuthenticationStatus.success;
       print('Sve je u redu!');
     } on FirebaseAuthException catch (e) {
@@ -67,10 +82,46 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
     return status;
   }
 
+  Future<DeleteUserAccountStatus> deleteUserAccount() async {
+    DeleteUserAccountStatus status = DeleteUserAccountStatus.initial;
+    try {
+      for (var memory in _memories) {
+        if (memory != null) {
+          await MemoryInformations.deleteMemory(memory.id);
+        }
+      }
+      for (var collection in _collections) {
+        if (collection != null) {
+          await CollectionsInformations.deleteCollection(collection.id);
+        }
+      }
+      if (_user?.profilePhotoUrl != null) {
+        await UserInformations.deleteProfilePhoto();
+      }
+      await UserInformations.deleteUserInfo();
+      await UserInformations.deleteUserAccount();
+
+      print('Sve je u redu!');
+      status = DeleteUserAccountStatus.success;
+    } catch (e) {
+      print(e);
+      status = DeleteUserAccountStatus.error;
+      errorMessage =
+          'Trenutno nismo u mogućnosti da deaktiviramo vaš korisnički nalog. Molimo vas da pokušate ponovo malo kasnije.';
+    }
+    return status;
+  }
+
   @override
   Widget build(BuildContext context) {
     setState(
-        () => _email = Provider.of<CurrentUserProvider>(context).credentials!);
+        () => _email = Provider.of<CurrentUserProvider>(context).credentials);
+    print(_email);
+    setState(() => _collections =
+        Provider.of<CollectionDataProvoder>(context).collections);
+    setState(
+        () => _memories = Provider.of<MemoryDataProvider>(context).memories);
+    setState(() => _user = Provider.of<UserDataProvider>(context).userData);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Deaktoivacija naloga'),
@@ -147,6 +198,102 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
                                             .bodyText2,
                                       ),
                                     ),
+                                  );
+                                } else if (result ==
+                                    RefreshUserAuthenticationStatus.success) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        backgroundColor: backgroundColor,
+                                        title: Text(
+                                          'Da li želite da deaktivirate vaš korisnički račun?',
+                                          style: GoogleFonts.encodeSans(
+                                            color: lightColor,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        content: Text(
+                                          'U slučaju brisanja ove uspomene, sve informacije koje su vezane za nju će biti trajno obrisani. Ako ste sigurni da želite da obrišete ovu uspomenu koristite dugme "Nastavite"',
+                                          style: GoogleFonts.encodeSans(
+                                            color: textColor,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Odustanite'),
+                                            style: TextButton.styleFrom(
+                                              primary: lightColor,
+                                              textStyle: GoogleFonts.encodeSans(
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () async {
+                                              setState(() =>
+                                                  _deleteUserAccountStatus =
+                                                      DeleteUserAccountStatus
+                                                          .loading);
+                                              final DeleteUserAccountStatus
+                                                  status =
+                                                  await deleteUserAccount();
+                                              if (status ==
+                                                  DeleteUserAccountStatus
+                                                      .error) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    backgroundColor:
+                                                        backgroundColor,
+                                                    content: Text(
+                                                      errorMessage.toString(),
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText2,
+                                                    ),
+                                                  ),
+                                                );
+                                              } else if (status ==
+                                                  DeleteUserAccountStatus
+                                                      .success) {
+                                                await UserAuthentication
+                                                    .signoutUser();
+                                                Navigator
+                                                    .pushNamedAndRemoveUntil(
+                                                        context,
+                                                        '/sign-in',
+                                                        (route) => false);
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    backgroundColor:
+                                                        backgroundColor,
+                                                    content: Text(
+                                                      'Vaš korisnički račun je uspješno deaktiviran.',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText2,
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                              setState(() =>
+                                                  _deleteUserAccountStatus =
+                                                      DeleteUserAccountStatus
+                                                          .initial);
+                                            },
+                                            child: Text('Nastavite'),
+                                            style: ElevatedButton.styleFrom(
+                                                primary: errorColor),
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   );
                                 }
                                 setState(() =>

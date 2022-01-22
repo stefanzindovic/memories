@@ -44,4 +44,12 @@ class UserInformations {
   static Future<void> deleteUserAccount() async {
     await _auth.currentUser!.delete();
   }
+
+  static Future<void> deleteUserInfo() async {
+    await _collection.doc(_auth.currentUser!.uid).delete();
+  }
+
+  static Future<void> deleteProfilePhoto() async {
+    await _storage.child(_auth.currentUser!.uid).delete();
+  }
 }
