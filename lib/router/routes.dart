@@ -11,3 +11,4 @@ const String resetPasswordRoute = '/reset-password';
 const String signInRoute = '/sign-in';
 const String signUpRoute = '/sign-up';
 const String moreInfoRoute = '/more-info';
+const String confirmIdentitiyRouter = '/confirm-identity';

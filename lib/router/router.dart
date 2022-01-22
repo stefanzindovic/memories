@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:memories/presentation/pages/add_collection/add_collection.dart';
 import 'package:memories/presentation/pages/add_memory/add_memory_page.dart';
 import 'package:memories/presentation/pages/collection/collection_page.dart';
+import 'package:memories/presentation/pages/confirm_identity/confirm_identity_page.dart';
 import 'package:memories/presentation/pages/edit_collection/edit_collection_page.dart';
 import 'package:memories/presentation/pages/edit_memory/edit_memory_page.dart';
 import 'package:memories/presentation/pages/edit_user_info/edit_user_info_page.dart';
@@ -70,7 +71,11 @@ Route generateApplicationRouter(RouteSettings settings) {
     case signUpRoute:
       return MaterialPageRoute(
           builder: (BuildContext context) => const SignupPage());
+    case confirmIdentitiyRoute:
+      return MaterialPageRoute(
+          builder: (BuildContext context) => const ConfirmIdentityPage());
     default:
-      return MaterialPageRoute(builder: (BuildContext context) => HomePage());
+      return MaterialPageRoute(
+          builder: (BuildContext context) => const HomePage());
   }
 }
