@@ -316,7 +316,9 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
                   height: 50.h,
                 ),
                 GestureDetector(
-                  onTap: () async {},
+                  onTap: () {
+                    Navigator.pushNamed(context, '/confirm-identity');
+                  },
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
