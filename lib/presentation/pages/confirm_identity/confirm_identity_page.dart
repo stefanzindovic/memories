@@ -188,6 +188,7 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
                                     await refreshUserAuthentication();
                                 if (result ==
                                     RefreshUserAuthenticationStatus.error) {
+                                  Navigator.pop(context);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       backgroundColor: backgroundColor,
