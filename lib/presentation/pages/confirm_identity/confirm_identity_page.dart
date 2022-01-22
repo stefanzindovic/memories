@@ -300,7 +300,7 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
                                                   )
                                                 : Text('Dalje'),
                                             style: ElevatedButton.styleFrom(
-                                                minimumSize: Size(90.w, 50.h),
+                                                minimumSize: Size(90.w, 65.h),
                                                 primary: errorColor),
                                           ),
                                         ],

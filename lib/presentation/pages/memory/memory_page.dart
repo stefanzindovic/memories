@@ -196,9 +196,19 @@ class _MemoryPageState extends State<MemoryPage> {
                                 setState(() => _deleteMemoryStatus =
                                     DeleteMemoryStatus.initial);
                               },
-                              child: Text('Nastavite'),
-                              style:
-                                  ElevatedButton.styleFrom(primary: errorColor),
+                              child: (_deleteMemoryStatus ==
+                                      DeleteMemoryStatus.loading)
+                                  ? SizedBox(
+                                      width: 24.w,
+                                      height: 24.h,
+                                      child: const CircularProgressIndicator(
+                                          color: lightColor),
+                                    )
+                                  : Text('Dalje'),
+                              style: ElevatedButton.styleFrom(
+                                primary: errorColor,
+                                minimumSize: Size(90.w, 65.h),
+                              ),
                             ),
                           ],
                         );
