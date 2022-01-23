@@ -26,11 +26,11 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
   Widget build(BuildContext context) {
     setState(() => _uid = Provider.of<CurrentUserProvider>(context).uid);
     setState(() => _user = Provider.of<UserDataProvider>(context).userData);
-    Timer t = Timer(Duration(milliseconds: 500), () {
+    Timer t = Timer(const Duration(milliseconds: 750), () {
       if (_uid == null) {
         setState(() => _screen = const SigninPage());
       } else {
-        Timer t = Timer(Duration(milliseconds: 500), () {
+        Timer t = Timer(const Duration(milliseconds: 750), () {
           if (_user == null) {
             setState(() => _screen = const MoreInfoPage());
           } else {
@@ -44,8 +44,8 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
       return Scaffold(
         body: Center(
           child: SizedBox(
-              width: 180.w,
-              height: 180.h,
+              width: 140.w,
+              height: 140.h,
               child: Image.asset('assets/logo.png')),
         ),
       );
