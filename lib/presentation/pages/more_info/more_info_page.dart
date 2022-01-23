@@ -282,11 +282,14 @@ class _MoreInfoPageState extends State<MoreInfoPage> {
                           if (_formKey.currentState!.validate()) {
                             setState(() => saveUserInfoStatus =
                                 SaveUserInfoStatus.loading);
-                            SaveUserInfoStatus result = await _saveUserInfo();
-                            print(_formKey);
+                            final SaveUserInfoStatus result =
+                                await _saveUserInfo();
                             if (result == SaveUserInfoStatus.success) {
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context, '/', (route) => false);
+                              try {
+                                Navigator.pushReplacementNamed(context, '/');
+                              } catch (e) {
+                                print('test');
+                              }
                             } else if (result == SaveUserInfoStatus.error) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -299,8 +302,6 @@ class _MoreInfoPageState extends State<MoreInfoPage> {
                                 ),
                               );
                             }
-                            setState(() => saveUserInfoStatus =
-                                SaveUserInfoStatus.initial);
                           }
                         },
                         child:

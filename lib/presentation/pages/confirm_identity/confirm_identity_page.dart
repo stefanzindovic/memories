@@ -264,11 +264,10 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
                                                       .success) {
                                                 await UserAuthentication
                                                     .signoutUser();
-                                                Navigator
-                                                    .pushNamedAndRemoveUntil(
-                                                        context,
-                                                        '/sign-in',
-                                                        (route) => false);
+                                                Navigator.pushReplacementNamed(
+                                                  context,
+                                                  '/sign-in',
+                                                );
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   SnackBar(

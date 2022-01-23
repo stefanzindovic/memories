@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:memories/models/user.dart';
 import 'package:memories/presentation/pages/home/home_page.dart';
 import 'package:memories/presentation/pages/more_info/more_info_page.dart';
 import 'package:memories/presentation/pages/signin/signin_page.dart';
@@ -6,21 +10,47 @@ import 'package:memories/providers/current_user_provider.dart';
 import 'package:memories/providers/user_data_provider.dart';
 import 'package:provider/provider.dart';
 
-class AuthenticationWrapper extends StatelessWidget {
+class AuthenticationWrapper extends StatefulWidget {
   const AuthenticationWrapper({Key? key}) : super(key: key);
 
   @override
+  _AuthenticationWrapperState createState() => _AuthenticationWrapperState();
+}
+
+class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
+  String? _uid;
+  UserModel? _user;
+  Widget? _screen;
+
+  @override
   Widget build(BuildContext context) {
-    final String? _uid = Provider.of<CurrentUserProvider>(context).uid;
-    if (_uid == null) {
-      return const SigninPage();
-    } else {
-      final _userData = Provider.of<UserDataProvider>(context).userData;
-      if (_userData != null) {
-        return const HomePage();
+    setState(() => _uid = Provider.of<CurrentUserProvider>(context).uid);
+    setState(() => _user = Provider.of<UserDataProvider>(context).userData);
+    Timer t = Timer(Duration(milliseconds: 500), () {
+      if (_uid == null) {
+        setState(() => _screen = const SigninPage());
       } else {
-        return const MoreInfoPage();
+        Timer t = Timer(Duration(milliseconds: 500), () {
+          if (_user == null) {
+            setState(() => _screen = const MoreInfoPage());
+          } else {
+            setState(() => _screen = const HomePage());
+          }
+        });
       }
+    });
+
+    if (_screen == null) {
+      return Scaffold(
+        body: Center(
+          child: SizedBox(
+              width: 180.w,
+              height: 180.h,
+              child: Image.asset('assets/logo.png')),
+        ),
+      );
+    } else {
+      return _screen!;
     }
   }
 }
