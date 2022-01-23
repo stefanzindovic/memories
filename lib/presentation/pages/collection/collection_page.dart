@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:memories/presentation/widgets/memory_card.dart';
 import 'package:memories/providers/current_user_provider.dart';
 import 'package:memories/providers/memory_data_provider.dart';
@@ -14,6 +15,7 @@ enum DeleteCollectionStatus {
   initial,
   success,
   error,
+  loading,
 }
 
 class CollectionPage extends StatefulWidget {
@@ -26,7 +28,9 @@ class CollectionPage extends StatefulWidget {
 
 class _CollectionPageState extends State<CollectionPage> {
   String? errorMessage;
-  Map? editInfo;
+  Map? editedInfo;
+  DeleteCollectionStatus _deleteCollectionStatus =
+      DeleteCollectionStatus.initial;
 
   Future<DeleteCollectionStatus> _deleteCollection() async {
     DeleteCollectionStatus status = DeleteCollectionStatus.initial;
@@ -66,7 +70,7 @@ class _CollectionPageState extends State<CollectionPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          editInfo?['title'] ?? widget.data['title'],
+          editedInfo?['title'] ?? widget.data['title'],
           overflow: TextOverflow.fade,
         ),
         actions: [
@@ -76,40 +80,104 @@ class _CollectionPageState extends State<CollectionPage> {
               onSelected: (result) async {
                 switch (result) {
                   case 'edit-collection':
-                    editInfo = await Navigator.pushNamed(
+                    editedInfo = await Navigator.pushNamed(
                             context, '/edit-collection',
-                            arguments: editInfo ?? widget.data)
+                            arguments: editedInfo ?? widget.data)
                         as Map<dynamic, dynamic>?;
-                    setState(() => editInfo = editInfo);
-                    if (editInfo != null) {
-                      widget.data['coverPhotoUrl'] = editInfo?['coverPhotoUrl'];
+                    setState(() => editedInfo = editedInfo);
+                    if (editedInfo != null) {
+                      widget.data['coverPhotoUrl'] =
+                          editedInfo?['coverPhotoUrl'];
                     }
                     break;
                   case 'delete-collection':
-                    final DeleteCollectionStatus result =
-                        await _deleteCollection();
-                    if (result == DeleteCollectionStatus.success) {
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
                           backgroundColor: backgroundColor,
-                          content: Text(
-                            'Uspješno ste obrisali kolekciju "${widget.data['title']}"',
-                            style: Theme.of(context).textTheme.bodyText2,
+                          title: Text(
+                            'Da li želite da obrišete uspomenu "${editedInfo?['title'] ?? widget.data['title'] ?? 'Test'}"?',
+                            style: GoogleFonts.encodeSans(
+                              color: lightColor,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
-                        ),
-                      );
-                    } else if (result == DeleteCollectionStatus.error) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: backgroundColor,
                           content: Text(
-                            errorMessage.toString(),
-                            style: Theme.of(context).textTheme.bodyText2,
+                            'U slučaju brisanja ove uspomene, sve informacije koje su vezane za nju će biti trajno obrisani. Ako ste sigurni da želite da obrišete ovu uspomenu koristite dugme "Nastavite"',
+                            style: GoogleFonts.encodeSans(
+                              color: textColor,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
-                      );
-                    }
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Odustanite'),
+                              style: TextButton.styleFrom(
+                                primary: lightColor,
+                                textStyle: GoogleFonts.encodeSans(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
+                                setState(() => _deleteCollectionStatus =
+                                    DeleteCollectionStatus.loading);
+                                final DeleteCollectionStatus result =
+                                    await _deleteCollection();
+                                if (result == DeleteCollectionStatus.success) {
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: backgroundColor,
+                                      content: Text(
+                                        'Uspješno ste obrisali kolekciju "${widget.data['title']}"',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2,
+                                      ),
+                                    ),
+                                  );
+                                } else if (result ==
+                                    DeleteCollectionStatus.error) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: backgroundColor,
+                                      content: Text(
+                                        errorMessage.toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                setState(() => _deleteCollectionStatus =
+                                    DeleteCollectionStatus.initial);
+                              },
+                              child: (_deleteCollectionStatus ==
+                                      DeleteCollectionStatus.loading)
+                                  ? SizedBox(
+                                      width: 24.w,
+                                      height: 24.h,
+                                      child: const CircularProgressIndicator(
+                                          color: lightColor),
+                                    )
+                                  : const Text('Dalje'),
+                              style: ElevatedButton.styleFrom(
+                                primary: errorColor,
+                                minimumSize: Size(90.w, 65.h),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                 }
               },
               child: Icon(
@@ -173,7 +241,7 @@ class _CollectionPageState extends State<CollectionPage> {
                   height: 50.h,
                 ),
                 (widget.data['coverPhotoUrl'] == null &&
-                        editInfo?['coverPhotoUrl'] == null)
+                        editedInfo?['coverPhotoUrl'] == null)
                     ? Container(
                         width: double.infinity,
                         height: 150.h,
@@ -197,7 +265,7 @@ class _CollectionPageState extends State<CollectionPage> {
                           color: backgroundColor,
                           image: DecorationImage(
                             image: NetworkImage(
-                              editInfo?['coverPhotoUrl'] ??
+                              editedInfo?['coverPhotoUrl'] ??
                                   widget.data['coverPhotoUrl'],
                             ),
                             fit: BoxFit.cover,
@@ -211,9 +279,14 @@ class _CollectionPageState extends State<CollectionPage> {
                 SizedBox(
                   height: 20.h,
                 ),
-                Column(
-                  children: _memoryCardsList,
-                ),
+                (_memoryCardsList.isEmpty)
+                    ? Center(
+                        child: Text('Nema uspomena',
+                            style: Theme.of(context).textTheme.bodyText1),
+                      )
+                    : Column(
+                        children: _memoryCardsList,
+                      ),
               ],
             ),
           ),

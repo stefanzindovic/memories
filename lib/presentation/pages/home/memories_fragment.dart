@@ -51,25 +51,22 @@ class MemoriesFragment extends StatelessWidget {
       body: SafeArea(
         minimum: EdgeInsets.symmetric(horizontal: 20.h),
         child: NotificationListener<OverscrollIndicatorNotification>(
-          onNotification: (overscroll) {
-            overscroll.disallowIndicator();
-            return true;
-          },
-          child: ListView(
-            physics: const ClampingScrollPhysics(),
-            padding: EdgeInsets.symmetric(vertical: 30.h),
-            children: (_memories.isEmpty)
-                ? [
-                    Center(
-                      child: Text(
-                        'Nema sačuvanih uspomena',
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                    )
-                  ]
-                : _memoryCardsList,
-          ),
-        ),
+            onNotification: (overscroll) {
+              overscroll.disallowIndicator();
+              return true;
+            },
+            child: (_memoryCardsList.isEmpty)
+                ? Center(
+                    child: Text(
+                      'Nema uspomena',
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  )
+                : ListView(
+                    physics: const ClampingScrollPhysics(),
+                    padding: EdgeInsets.symmetric(vertical: 30.h),
+                    children: _memoryCardsList,
+                  )),
       ),
     );
   }

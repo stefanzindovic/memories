@@ -27,7 +27,7 @@ class ProfileFragment extends StatelessWidget {
         automaticallyImplyLeading: false,
         titleSpacing: 20.w,
         title: Text(
-          _user!.name,
+          _user?.name ?? 'Name',
           overflow: TextOverflow.fade,
         ),
         actions: [
@@ -54,7 +54,7 @@ class ProfileFragment extends StatelessWidget {
             SizedBox(
               height: 50.h,
             ),
-            (_user.profilePhotoUrl == null)
+            (_user?.profilePhotoUrl == null)
                 ? Container(
                     width: 120.w,
                     height: 120.h,
@@ -78,7 +78,7 @@ class ProfileFragment extends StatelessWidget {
                       color: backgroundColor,
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: NetworkImage(_user.profilePhotoUrl.toString()),
+                        image: NetworkImage(_user!.profilePhotoUrl.toString()),
                       ),
                     ),
                   ),

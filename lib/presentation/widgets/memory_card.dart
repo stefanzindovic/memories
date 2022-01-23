@@ -95,7 +95,7 @@ class _MemoryCardState extends State<MemoryCard> {
                       FeatherIcons.heart,
                       size: 25,
                       color: (widget.memory!.isFavorite == true)
-                          ? lightColor
+                          ? primaryColor
                           : textColor,
                     ),
                   )

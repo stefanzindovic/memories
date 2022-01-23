@@ -188,6 +188,7 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
                                     await refreshUserAuthentication();
                                 if (result ==
                                     RefreshUserAuthenticationStatus.error) {
+                                  Navigator.pop(context);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       backgroundColor: backgroundColor,
@@ -214,7 +215,7 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
                                           ),
                                         ),
                                         content: Text(
-                                          'U slučaju brisanja ove uspomene, sve informacije koje su vezane za nju će biti trajno obrisani. Ako ste sigurni da želite da obrišete ovu uspomenu koristite dugme "Nastavite"',
+                                          'U slučaju brisanja ove uspomene, sve informacije koje su vezane za nju će biti trajno obrisani. Ako ste sigurni da želite da obrišete ovu uspomenu koristite dugme "Dalje"',
                                           style: GoogleFonts.encodeSans(
                                             color: textColor,
                                             fontWeight: FontWeight.w400,
@@ -263,11 +264,10 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
                                                       .success) {
                                                 await UserAuthentication
                                                     .signoutUser();
-                                                Navigator
-                                                    .pushNamedAndRemoveUntil(
-                                                        context,
-                                                        '/sign-in',
-                                                        (route) => false);
+                                                Navigator.pushReplacementNamed(
+                                                  context,
+                                                  '/sign-in',
+                                                );
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   SnackBar(
@@ -287,8 +287,19 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
                                                       DeleteUserAccountStatus
                                                           .initial);
                                             },
-                                            child: Text('Nastavite'),
+                                            child: (_deleteUserAccountStatus ==
+                                                    DeleteUserAccountStatus
+                                                        .loading)
+                                                ? SizedBox(
+                                                    width: 24.w,
+                                                    height: 24.h,
+                                                    child:
+                                                        const CircularProgressIndicator(
+                                                            color: lightColor),
+                                                  )
+                                                : Text('Dalje'),
                                             style: ElevatedButton.styleFrom(
+                                                minimumSize: Size(90.w, 65.h),
                                                 primary: errorColor),
                                           ),
                                         ],

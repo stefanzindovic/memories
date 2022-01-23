@@ -41,20 +41,18 @@ class FavoritesFragment extends StatelessWidget {
             overscroll.disallowIndicator();
             return true;
           },
-          child: ListView(
-            physics: const ClampingScrollPhysics(),
-            padding: EdgeInsets.symmetric(vertical: 30.h),
-            children: (_favoriteMemories.isEmpty)
-                ? [
-                    Center(
-                      child: Text(
-                        'Nema uspomena',
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                    )
-                  ]
-                : _memoryCardsList,
-          ),
+          child: (_memoryCardsList.isEmpty)
+              ? Center(
+                  child: Text(
+                    'Nema uspomena',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                )
+              : ListView(
+                  physics: const ClampingScrollPhysics(),
+                  padding: EdgeInsets.symmetric(vertical: 30.h),
+                  children: _memoryCardsList,
+                ),
         ),
       ),
     );

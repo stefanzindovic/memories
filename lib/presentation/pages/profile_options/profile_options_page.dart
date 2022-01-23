@@ -160,8 +160,7 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
                         resetPasswordStatus = ResetPasswordStatus.loading);
                     ResetPasswordStatus result = await _resetPassword();
                     if (result == ResetPasswordStatus.success) {
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/sign-in', (route) => false);
+                      Navigator.pushReplacementNamed(context, '/sign-in');
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           backgroundColor: backgroundColor,
@@ -248,8 +247,7 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
                         ),
                       );
                     } else if (result == LogoutStatus.success) {
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/sign-in', (route) => false);
+                      Navigator.pushReplacementNamed(context, '/sign-in');
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           backgroundColor: backgroundColor,
