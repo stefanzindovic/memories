@@ -7,6 +7,10 @@ class ConnectivityProvider extends ChangeNotifier {
   bool _isOnline = false;
   bool get isOnline => _isOnline;
 
+  startMonitoring() async {
+    await initConnectivity();
+  }
+
   Future<void> initConnectivity() async {
     try {
       var status = await _connectivity.checkConnectivity();
