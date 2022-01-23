@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:memories/presentation/pages/no_internet/no_internet_page.dart';
 import 'package:memories/presentation/widgets/authentication_wrapper.dart';
 import 'package:memories/providers/collection_data_proivder.dart';
 import 'package:memories/providers/current_user_provider.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
         theme: generateTheme(),
         debugShowCheckedModeBanner: false,
         onGenerateRoute: generateApplicationRouter,
-        home: const AuthenticationWrapper(),
+        home: const NoInternetPage(),
       ),
     );
   }
