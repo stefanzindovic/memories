@@ -9,21 +9,6 @@ class ConnectivityProvider extends ChangeNotifier {
   bool _isOnline = false;
   bool get isOnline => _isOnline;
 
-  startMonitoring() async {
-    await initConnectivity();
-    _connectivity.onConnectivityChanged.listen((result) async {
-      if (result == ConnectivityResult.none) {
-        _isOnline = false;
-        notifyListeners();
-      } else {
-        await updateConnectionStatus().then((bool isConnected) {
-          _isOnline = isConnected;
-          notifyListeners();
-        });
-      }
-    });
-  }
-
   Future<void> initConnectivity() async {
     try {
       var status = await _connectivity.checkConnectivity();
@@ -52,5 +37,20 @@ class ConnectivityProvider extends ChangeNotifier {
       isConnected = false;
     }
     return isConnected;
+  }
+
+  startMonitoring() async {
+    await initConnectivity();
+    _connectivity.onConnectivityChanged.listen((result) async {
+      if (result == ConnectivityResult.none) {
+        _isOnline = false;
+        notifyListeners();
+      } else {
+        await updateConnectionStatus().then((bool isConnected) {
+          _isOnline = isConnected;
+          notifyListeners();
+        });
+      }
+    });
   }
 }

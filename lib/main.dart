@@ -28,6 +28,7 @@ void main() async {
           ),
           ChangeNotifierProvider(
             create: (_) => ConnectivityProvider(),
+            child: const MyApp(),
           ),
         ],
         child: const MyApp(),

@@ -17,11 +17,15 @@ class UserInformations {
   }
 
   static Future<UserModel?>? getUserInfo(String uid) async {
-    final DocumentSnapshot snapshot = await _collection.doc(uid).get();
-    if (snapshot.data() == null) {
-      return null;
-    } else {
-      return UserModel.fromJson(snapshot);
+    try {
+      final DocumentSnapshot snapshot = await _collection.doc(uid).get();
+      if (snapshot.data() == null) {
+        return null;
+      } else {
+        return UserModel.fromJson(snapshot);
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
