@@ -28,7 +28,7 @@ class ProfileFragment extends StatelessWidget {
         titleSpacing: 20.w,
         title: Text(
           _user?.name ?? 'Name',
-          overflow: TextOverflow.fade,
+          overflow: TextOverflow.ellipsis,
         ),
         actions: [
           Padding(

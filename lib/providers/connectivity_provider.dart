@@ -6,8 +6,8 @@ import 'package:flutter/widgets.dart';
 
 class ConnectivityProvider extends ChangeNotifier {
   Connectivity _connectivity = Connectivity();
-  bool _isOnline = false;
-  bool get isOnline => _isOnline;
+  bool? _isOnline;
+  bool? get isOnline => _isOnline;
 
   Future<void> initConnectivity() async {
     try {

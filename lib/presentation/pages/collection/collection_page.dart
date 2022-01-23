@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:memories/models/memory.dart';
 import 'package:memories/presentation/widgets/memory_card.dart';
 import 'package:memories/providers/current_user_provider.dart';
 import 'package:memories/providers/memory_data_provider.dart';
 import 'package:memories/repository/collections_informations.dart';
+import 'package:memories/repository/memory_informations.dart';
 import 'package:memories/theme/colors.dart';
 import 'package:provider/provider.dart';
 
@@ -31,11 +33,26 @@ class _CollectionPageState extends State<CollectionPage> {
   Map? editedInfo;
   DeleteCollectionStatus _deleteCollectionStatus =
       DeleteCollectionStatus.initial;
+  List<MemoryModel?> memories = [];
 
   Future<DeleteCollectionStatus> _deleteCollection() async {
     DeleteCollectionStatus status = DeleteCollectionStatus.initial;
     try {
       await CollectionsInformations.deleteCollection(widget.data['id']);
+      for (var memory in memories) {
+        if (memory != null) {
+          MemoryModel model = MemoryModel(
+              id: memory.id,
+              title: memory.title,
+              story: memory.story,
+              collectionId: 'no-collection',
+              authorId: memory.authorId,
+              coverPhotoUrl: memory.coverPhotoUrl,
+              createdAt: memory.createdAt,
+              isFavorite: memory.isFavorite);
+          await MemoryInformations.updateMemory(model);
+        }
+      }
       status = DeleteCollectionStatus.success;
       print('Sve je u redu!');
     } catch (e) {
@@ -53,8 +70,8 @@ class _CollectionPageState extends State<CollectionPage> {
         Provider.of<CurrentUserProvider>(context).uid.toString();
     Provider.of<MemoryDataProvider>(context)
         .setMemoriesByCollection(_uid, widget.data['id']);
-    final memories =
-        Provider.of<MemoryDataProvider>(context).collectionMemories;
+    setState(() =>
+        memories = Provider.of<MemoryDataProvider>(context).collectionMemories);
 
     final List<Widget> _memoryCardsList = [];
 
@@ -71,7 +88,7 @@ class _CollectionPageState extends State<CollectionPage> {
       appBar: AppBar(
         title: Text(
           editedInfo?['title'] ?? widget.data['title'],
-          overflow: TextOverflow.fade,
+          overflow: TextOverflow.ellipsis,
         ),
         actions: [
           Padding(
