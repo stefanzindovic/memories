@@ -161,10 +161,8 @@ class _SignupPageState extends State<SignupPage> {
                                             email: _email, password: _password);
                                         if (result == SignupStatus.success) {
                                           print("Sve je u redu");
-                                          Navigator.pushNamedAndRemoveUntil(
-                                              context,
-                                              '/more-info',
-                                              (route) => false);
+                                          Navigator.pushReplacementNamed(
+                                              context, '/more-info');
                                         } else if (result ==
                                             SignupStatus.error) {
                                           ScaffoldMessenger.of(context)

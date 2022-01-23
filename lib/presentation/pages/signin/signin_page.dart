@@ -193,8 +193,8 @@ class _SigninPageState extends State<SigninPage> {
                                         );
                                       } else if (result ==
                                           SigninStatus.success) {
-                                        Navigator.pushNamedAndRemoveUntil(
-                                            context, '/', (route) => false);
+                                        Navigator.pushReplacementNamed(
+                                            context, '/');
                                       }
                                       setState(() =>
                                           signinStatus = SigninStatus.initial);
