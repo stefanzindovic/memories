@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -9,6 +11,15 @@ class ConnectivityProvider extends ChangeNotifier {
 
   startMonitoring() async {
     await initConnectivity();
+    _connectivity.onConnectivityChanged.listen((result) {
+      if (result == ConnectivityResult.none) {
+        _isOnline = false;
+        notifyListeners();
+      } else {
+        _isOnline = true;
+        notifyListeners();
+      }
+    });
   }
 
   Future<void> initConnectivity() async {
@@ -25,5 +36,19 @@ class ConnectivityProvider extends ChangeNotifier {
     } on PlatformException catch (e) {
       print("Connectivity provider error: ${e.toString()}");
     }
+  }
+
+  Future<bool> updateConnectionStatus() async {
+    bool isConnected = false;
+    try {
+      final List<InternetAddress> result =
+          await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        isConnected = true;
+      }
+    } on SocketException catch (e) {
+      isConnected = false;
+    }
+    return isConnected;
   }
 }
