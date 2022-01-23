@@ -279,9 +279,14 @@ class _CollectionPageState extends State<CollectionPage> {
                 SizedBox(
                   height: 20.h,
                 ),
-                Column(
-                  children: _memoryCardsList,
-                ),
+                (_memoryCardsList.isEmpty)
+                    ? Center(
+                        child: Text('Nema uspomena',
+                            style: Theme.of(context).textTheme.bodyText1),
+                      )
+                    : Column(
+                        children: _memoryCardsList,
+                      ),
               ],
             ),
           ),
