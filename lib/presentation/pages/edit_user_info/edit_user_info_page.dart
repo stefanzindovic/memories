@@ -161,7 +161,7 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
                 ),
                 Align(
                   alignment: Alignment.topCenter,
-                  child: (_profilePhotoUrl == null ||
+                  child: (_profilePhoto == null && _profilePhotoUrl == null ||
                           _profilePictureIsRemoved == true)
                       ? PopupMenuButton(
                           itemBuilder: (context) => [

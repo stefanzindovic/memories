@@ -188,7 +188,8 @@ class _EditMemoryPageState extends State<EditMemoryPage> {
                 ),
                 Align(
                   alignment: Alignment.topCenter,
-                  child: (widget.data['coverPhotoUrl'] == null ||
+                  child: (_coverPhoto == null &&
+                              widget.data['coverPhotoUrl'] == null ||
                           _coverPhotoIsRemoved == true)
                       ? PopupMenuButton(
                           itemBuilder: (context) => [
