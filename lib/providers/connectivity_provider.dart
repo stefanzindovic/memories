@@ -11,13 +11,15 @@ class ConnectivityProvider extends ChangeNotifier {
 
   startMonitoring() async {
     await initConnectivity();
-    _connectivity.onConnectivityChanged.listen((result) {
+    _connectivity.onConnectivityChanged.listen((result) async {
       if (result == ConnectivityResult.none) {
         _isOnline = false;
         notifyListeners();
       } else {
-        _isOnline = true;
-        notifyListeners();
+        await updateConnectionStatus().then((bool isConnected) {
+          _isOnline = isConnected;
+          notifyListeners();
+        });
       }
     });
   }
