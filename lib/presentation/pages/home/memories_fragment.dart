@@ -31,7 +31,7 @@ class MemoriesFragment extends StatelessWidget {
         titleSpacing: 20.w,
         title: const Text(
           'Uspomene',
-          overflow: TextOverflow.fade,
+          overflow: TextOverflow.ellipsis,
         ),
         actions: [
           Padding(

@@ -31,7 +31,7 @@ class FavoritesFragment extends StatelessWidget {
         titleSpacing: 20.w,
         title: const Text(
           'Najdraže uspomene',
-          overflow: TextOverflow.fade,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
       body: SafeArea(

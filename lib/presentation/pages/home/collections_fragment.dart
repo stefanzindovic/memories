@@ -19,7 +19,7 @@ class CollectionsFragment extends StatelessWidget {
         titleSpacing: 20.w,
         title: const Text(
           'Kolekcije',
-          overflow: TextOverflow.fade,
+          overflow: TextOverflow.ellipsis,
         ),
         actions: [
           Padding(
