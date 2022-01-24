@@ -198,6 +198,7 @@ class _MemoryCardState extends State<MemoryCard> {
                   softWrap: true,
                   maxLines: 5,
                   style: Theme.of(context).textTheme.bodyText1,
+                  textAlign: TextAlign.start,
                 ),
               ),
             ),

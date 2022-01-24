@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -69,6 +70,12 @@ class _AddCollectionPageState extends State<AddCollectionPage> {
       await CollectionsInformations.createNewCollection(collection);
       print('Sve je u redu!');
       status = SaveCollectionStatus.success;
+    } on FirebaseException catch (e) {
+      print(e);
+      if (e.code == 'network-request-failed') {
+        errorMessage =
+            'Internet konekcija nije ostvarena. Molimo vas da provjerite vašu internet vezu i pokušajte ponovo.';
+      }
     } catch (e) {
       print(e);
       errorMessage =
