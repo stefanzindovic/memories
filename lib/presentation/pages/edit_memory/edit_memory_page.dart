@@ -441,7 +441,7 @@ class _EditMemoryPageState extends State<EditMemoryPage> {
                           if (value!.length < 60 ||
                               value.length > 1000000 ||
                               !RegExp(r"^[a-zA-Z0-9\s]").hasMatch(value)) {
-                            return 'Sadržaj vaše uspomene mora sadržati najmanje 5 karaktera i ne može biti duži od 1 000 000 karaktera. Takođe sadržaj vaše uspomene može sadržati slova, brojeve i znakove.';
+                            return 'Sadržaj vaše uspomene mora sadržati najmanje 60 karaktera i ne može biti duži od 1 000 000 karaktera. Takođe sadržaj vaše uspomene može sadržati slova, brojeve i znakove.';
                           } else {
                             setState(() => _story = value);
                           }
