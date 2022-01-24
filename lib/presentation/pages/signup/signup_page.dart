@@ -36,7 +36,6 @@ class _SignupPageState extends State<SignupPage> {
           .setCredentials();
       status = SignupStatus.success;
     } on FirebaseAuthException catch (e) {
-      print(e);
       if (e.code == 'email-already-in-use') {
         errorMessage =
             'Željena e-mail adresa je već u upotrebi. Molimo vas da pokušate ponovo sa nekom drugom e-mail adresom.';
@@ -49,7 +48,6 @@ class _SignupPageState extends State<SignupPage> {
       }
       status = SignupStatus.error;
     } catch (e) {
-      print(e);
       errorMessage =
           'Došlo je do greške pri kreiranju vašeg korisničkog računa. Molimo vas da pokušate ponovo malo kasnije.';
       status = SignupStatus.error;
@@ -163,7 +161,6 @@ class _SignupPageState extends State<SignupPage> {
                                         SignupStatus result = await signupUser(
                                             email: _email, password: _password);
                                         if (result == SignupStatus.success) {
-                                          print("Sve je u redu");
                                           Navigator.pushReplacementNamed(
                                               context, '/more-info');
                                         } else if (result ==

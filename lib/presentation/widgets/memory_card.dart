@@ -29,7 +29,6 @@ class _MemoryCardState extends State<MemoryCard> {
     }
     return GestureDetector(
       onTap: () {
-        print(_collectionTitle);
         Navigator.pushNamed(context, '/memory', arguments: {
           'data': widget.memory!.toJson(),
           'collection_name': _collectionTitle,

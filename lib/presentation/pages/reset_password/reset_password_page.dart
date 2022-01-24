@@ -31,10 +31,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
     try {
       await UserAuthentication.sendLinkForResetPassword(email);
-      print('Sve je u redu');
       status = ResetPasswordStatus.success;
     } on FirebaseAuthException catch (e) {
-      print(e);
       if (e.code == 'user-not-found') {
         errorMessage =
             'Korisnik sa tom e-mail adresom ne postoji. Molimo vas da pokušate sa drugom e-mail adresom.';
@@ -47,7 +45,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       }
       status = ResetPasswordStatus.error;
     } catch (e) {
-      print(e);
       errorMessage =
           'Došlo je do neočekivane greške pri izmjeni vaše lozinke. Molimo vas da pokušate ponovo.';
       status = ResetPasswordStatus.error;

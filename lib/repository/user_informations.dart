@@ -25,6 +25,7 @@ class UserInformations {
         return UserModel.fromJson(snapshot);
       }
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
   }

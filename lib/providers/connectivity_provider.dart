@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 class ConnectivityProvider extends ChangeNotifier {
-  Connectivity _connectivity = Connectivity();
+  final Connectivity _connectivity = Connectivity();
   bool? _isOnline;
   bool? get isOnline => _isOnline;
 
@@ -21,6 +21,7 @@ class ConnectivityProvider extends ChangeNotifier {
         notifyListeners();
       }
     } on PlatformException catch (e) {
+      // ignore: avoid_print
       print("Connectivity provider error: ${e.toString()}");
     }
   }
@@ -33,7 +34,7 @@ class ConnectivityProvider extends ChangeNotifier {
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         isConnected = true;
       }
-    } on SocketException catch (e) {
+    } on SocketException catch (_) {
       isConnected = false;
     }
     return isConnected;

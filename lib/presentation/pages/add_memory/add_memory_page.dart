@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memories/models/collection.dart';
 import 'package:memories/models/memory.dart';
@@ -63,7 +62,6 @@ class _AddMemoryPageState extends State<AddMemoryPage> {
         coverPhotoUrl = await MemoryInformations.uploadMemoryCoverPhoto(
             memoryId, _coverPhoto!);
       }
-      print(_coverPhoto);
       final memory = MemoryModel(
         id: memoryId,
         title: _title,
@@ -75,10 +73,8 @@ class _AddMemoryPageState extends State<AddMemoryPage> {
         isFavorite: false,
       );
       await MemoryInformations.createNewMemory(memory);
-      print('Sve je u redu.');
       status = CreateMemoryStatus.success;
     } catch (e) {
-      print(e);
       status = CreateMemoryStatus.error;
       errorMessage =
           'Došlo je do neočekivane greške pri kreiranju nove uspomene. Molimo vas da pokušate ponovo.';

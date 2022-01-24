@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/models/memory.dart';
 import 'package:memories/presentation/widgets/memory_card.dart';
 import 'package:memories/providers/memory_data_provider.dart';
-import 'package:memories/repository/memory_informations.dart';
 import 'package:provider/provider.dart';
 
 class MemoriesFragment extends StatelessWidget {

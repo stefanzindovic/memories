@@ -39,10 +39,8 @@ class _SigninPageState extends State<SigninPage> {
       await Provider.of<CurrentUserProvider>(context, listen: false).setUid();
       await Provider.of<CurrentUserProvider>(context, listen: false)
           .setCredentials();
-      print('Sve je u redu!');
       status = SigninStatus.success;
     } on FirebaseAuthException catch (e) {
-      print(e);
       if (e.code == 'user-not-found') {
         errorMessage =
             'Korisnik sa tom e-mail adresom ne postoji. Molimo vas da pokušate sa drugom e-mail adresom ili da kreirate novi korisniški račun.';
@@ -55,7 +53,6 @@ class _SigninPageState extends State<SigninPage> {
       }
       status = SigninStatus.error;
     } catch (e) {
-      print(e);
       errorMessage =
           'Došlo je do neočekivane greške pri prijavljivanju na vaš korisnički račun. Molimo vas da pokušate ponovo malo kasnije.';
       status = SigninStatus.error;

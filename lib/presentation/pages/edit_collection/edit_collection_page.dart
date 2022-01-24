@@ -52,10 +52,8 @@ class _EditCollectionPageState extends State<EditCollectionPage> {
           coverPhotoUrl: coverPhotoUrl,
           authorId: widget.data['authorId']);
       await CollectionsInformations.updateCollection(_collection!);
-      print('Sve je u redu');
       status = UpdateCollectionStatus.success;
     } catch (e) {
-      print(e);
       status = UpdateCollectionStatus.error;
       errorMessage =
           'Došlo je do neočekivane greške pri izmjeni podataka ove kolekcije. Molimo vas da pokušate ponovo.';
@@ -113,7 +111,7 @@ class _EditCollectionPageState extends State<EditCollectionPage> {
                       SnackBar(
                         backgroundColor: backgroundColor,
                         content: Text(
-                          'Uspješno ste izmijenili informacije o kolekciji "${_title}".',
+                          'Uspješno ste izmijenili informacije o kolekciji "$_title".',
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                       ),

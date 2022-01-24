@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memories/models/collection.dart';
 import 'package:memories/models/memory.dart';
@@ -64,12 +63,10 @@ class _EditMemoryPageState extends State<EditMemoryPage> {
           createdAt: widget.data['createdAt'],
           isFavorite: widget.data['isFavorite']);
       await MemoryInformations.updateMemory(_memory!);
-      print('Sve je u redu');
       status = UpdateMemoryStatus.success;
     } catch (e) {
       errorMessage =
           'Došlo je do neočekovane greške pri izmjeni podataka o ovoj uspomeni. Molimo vas da pokušate ponovo.';
-      print(e);
       status = UpdateMemoryStatus.error;
     }
     return status;

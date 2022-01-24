@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/presentation/widgets/memory_card.dart';
-import 'package:memories/providers/current_user_provider.dart';
 import 'package:memories/providers/memory_data_provider.dart';
 import 'package:provider/provider.dart';
 
