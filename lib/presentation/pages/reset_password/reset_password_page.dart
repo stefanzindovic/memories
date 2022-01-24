@@ -41,6 +41,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       } else if (e.code == 'network-request-failed') {
         errorMessage =
             'Internet konekcija nije ostvarena. Molimo vas da provjerite vašu internet vezu i pokušajte ponovo.';
+      } else if (e.code == 'network-request-failed') {
+        errorMessage =
+            'Internet konekcija nije ostvarena. Molimo vas da provjerite vašu internet vezu i pokušajte ponovo.';
       }
       status = ResetPasswordStatus.error;
     } catch (e) {

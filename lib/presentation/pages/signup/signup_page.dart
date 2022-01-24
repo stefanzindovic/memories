@@ -43,6 +43,9 @@ class _SignupPageState extends State<SignupPage> {
       } else if (e.code == 'network-request-failed') {
         errorMessage =
             'Internet konekcija nije ostvarena. Molimo vas da provjerite vašu internet vezu i pokušajte ponovo.';
+      } else if (e.code == 'network-request-failed') {
+        errorMessage =
+            'Internet konekcija nije ostvarena. Molimo vas da provjerite vašu internet vezu i pokušajte ponovo.';
       }
       status = SignupStatus.error;
     } catch (e) {
