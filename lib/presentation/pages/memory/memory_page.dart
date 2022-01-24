@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:memories/models/collection.dart';
 import 'package:memories/providers/collection_data_proivder.dart';
-import 'package:memories/repository/collections_informations.dart';
 import 'package:memories/repository/memory_informations.dart';
 import 'package:memories/theme/colors.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +37,7 @@ class MemoryPage extends StatefulWidget {
 class _MemoryPageState extends State<MemoryPage> {
   String? errorMessage;
   DeleteMemoryStatus _deleteMemoryStatus = DeleteMemoryStatus.initial;
-  ChangeMemoryFavoriteStatusStatus _changeMemoryFavoriteStatusStatus =
+  final ChangeMemoryFavoriteStatusStatus _changeMemoryFavoriteStatusStatus =
       ChangeMemoryFavoriteStatusStatus.initial;
   Map? editedInfo;
 
@@ -48,9 +47,7 @@ class _MemoryPageState extends State<MemoryPage> {
       await MemoryInformations.changeMemoryFavoriteState(
           widget.data['data']['id'], !widget.data['data']['isFavorite']);
       status = ChangeMemoryFavoriteStatusStatus.success;
-      print('Sve je u redu!');
     } catch (e) {
-      print(e);
       if (widget.data['data']['isFavorite'] == true) {
         errorMessage =
             'Došlo je do neočekivane greške pri uklanjanju ove uspomene sa liste vaših najdražih uspomena. Molimo vas da pokušate ponovo.';
@@ -67,10 +64,8 @@ class _MemoryPageState extends State<MemoryPage> {
     DeleteMemoryStatus status = _deleteMemoryStatus;
     try {
       await MemoryInformations.deleteMemory(widget.data['data']['id']);
-      print('Sve je u redu');
       status = DeleteMemoryStatus.success;
     } catch (e) {
-      print(e);
       status = DeleteMemoryStatus.error;
       errorMessage =
           'Došlo je do neočekivane greške pri brisanju ove uspomene. Molimo vas da pokušate ponovo.';
@@ -92,7 +87,6 @@ class _MemoryPageState extends State<MemoryPage> {
         }
       }
     }
-    print(widget.data);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -204,7 +198,7 @@ class _MemoryPageState extends State<MemoryPage> {
                                       child: const CircularProgressIndicator(
                                           color: lightColor),
                                     )
-                                  : Text('Dalje'),
+                                  : const Text('Dalje'),
                               style: ElevatedButton.styleFrom(
                                 primary: errorColor,
                                 minimumSize: Size(90.w, 65.h),

@@ -18,7 +18,8 @@ import 'package:memories/router/routes.dart';
 Route generateApplicationRouter(RouteSettings settings) {
   switch (settings.name) {
     case homeRoute:
-      return MaterialPageRoute(builder: (BuildContext context) => HomePage());
+      return MaterialPageRoute(
+          builder: (BuildContext context) => const HomePage());
     case memoryRoute:
       final arguments = settings.arguments as Map;
       return MaterialPageRoute(

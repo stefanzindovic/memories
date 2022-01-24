@@ -2,17 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:memories/models/collection.dart';
-import 'package:memories/models/memory.dart';
-import 'package:memories/providers/collection_data_proivder.dart';
 import 'package:memories/providers/current_user_provider.dart';
-import 'package:memories/providers/memory_data_provider.dart';
-import 'package:memories/repository/collections_informations.dart';
-import 'package:memories/repository/memory_informations.dart';
-import 'package:memories/repository/user_informations.dart';
 import 'package:memories/theme/colors.dart';
-import 'package:memories/repository/secure_storage.dart';
 import 'package:memories/repository/user_authentication.dart';
 import 'package:provider/provider.dart';
 
@@ -47,10 +38,8 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
 
     try {
       await UserAuthentication.signoutUser();
-      print('Sve je u redu!');
       status = LogoutStatus.success;
     } catch (e) {
-      print(e);
       errorMessage =
           'Došlo je do neočekivane greške pri odjavljivanju sa vašeg korisničkog računa. Molimo vas da pokušate ponovo kasnije.';
       status = LogoutStatus.error;
@@ -66,10 +55,8 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
           .toString();
       await UserAuthentication.sendLinkForResetPassword(email);
       await UserAuthentication.signoutUser();
-      print('Sve je u redu!');
       status = ResetPasswordStatus.success;
     } on FirebaseAuthException catch (e) {
-      print(e);
       if (e.code == 'user-not-found') {
         errorMessage =
             'Korisnik sa tom e-mail adresom ne postoji. Molimo vas da pokušate sa drugom e-mail adresom.';
@@ -79,7 +66,6 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
       }
       status = ResetPasswordStatus.error;
     } catch (e) {
-      print(e);
       errorMessage =
           'Došlo je do neočekivane greške pri izmjeni vaše lozinke. Molimo vas da pokušate ponovo.';
       status = ResetPasswordStatus.error;
@@ -142,7 +128,7 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
                               SizedBox(
                                 width: 10.w,
                               ),
-                              Text('Izmijenite lične informacije'),
+                              const Text('Izmijenite lične informacije'),
                             ],
                           ),
                           const Icon(FeatherIcons.arrowRight),
@@ -211,7 +197,7 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
                               SizedBox(
                                 width: 10.w,
                               ),
-                              Text('Izmijenite lozinku'),
+                              const Text('Izmijenite lozinku'),
                             ],
                           ),
                           (resetPasswordStatus == ResetPasswordStatus.loading)
@@ -285,7 +271,7 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
                               SizedBox(
                                 width: 10.w,
                               ),
-                              Text('Odjavite se'),
+                              const Text('Odjavite se'),
                             ],
                           ),
                           (logoutStatus == LogoutStatus.loading)
@@ -342,7 +328,7 @@ class _ProfileOptionsPageState extends State<ProfileOptionsPage> {
                               SizedBox(
                                 width: 10.w,
                               ),
-                              Text('Deaktivirajte korisnički račun'),
+                              const Text('Deaktivirajte korisnički račun'),
                             ],
                           ),
                           const Icon(FeatherIcons.arrowRight),

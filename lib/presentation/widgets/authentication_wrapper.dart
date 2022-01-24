@@ -26,10 +26,12 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
   Widget build(BuildContext context) {
     setState(() => _uid = Provider.of<CurrentUserProvider>(context).uid);
     setState(() => _user = Provider.of<UserDataProvider>(context).userData);
+    // ignore: unused_local_variable
     Timer t = Timer(const Duration(milliseconds: 750), () {
       if (_uid == null) {
         setState(() => _screen = const SigninPage());
       } else {
+        // ignore: unused_local_variable
         Timer t = Timer(const Duration(milliseconds: 750), () {
           if (_user == null) {
             setState(() => _screen = const MoreInfoPage());

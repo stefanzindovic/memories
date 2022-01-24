@@ -1,4 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/presentation/pages/no_internet/no_internet_page.dart';

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -65,10 +64,8 @@ class _MoreInfoPageState extends State<MoreInfoPage> {
         profilePhotoUrl: _profilePhotoUrl,
       );
       await UserInformations.insertUserInfo(user);
-      print('Sve je u redu!');
       status = SaveUserInfoStatus.success;
     } catch (e) {
-      print(e);
       status = SaveUserInfoStatus.error;
       errorMessage =
           'Došlo je do neočekivane greške pri čuvanju vaših ličnih podataka. Molimo vas da pokušate ponovo.';
@@ -288,7 +285,8 @@ class _MoreInfoPageState extends State<MoreInfoPage> {
                               try {
                                 Navigator.pushReplacementNamed(context, '/');
                               } catch (e) {
-                                print('test');
+                                // ignore: avoid_print
+                                print(e);
                               }
                             } else if (result == SaveUserInfoStatus.error) {
                               ScaffoldMessenger.of(context).showSnackBar(

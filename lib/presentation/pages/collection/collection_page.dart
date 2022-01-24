@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,6 +18,7 @@ enum DeleteCollectionStatus {
   loading,
 }
 
+// ignore: must_be_immutable
 class CollectionPage extends StatefulWidget {
   Map data;
   CollectionPage({Key? key, required this.data}) : super(key: key);
@@ -54,9 +53,7 @@ class _CollectionPageState extends State<CollectionPage> {
         }
       }
       status = DeleteCollectionStatus.success;
-      print('Sve je u redu!');
     } catch (e) {
-      print(e);
       errorMessage =
           'Došlo je do neočekivane greške pri brisanju ove kolekcije. Molimo vas da pokušate ponovo.';
       status = DeleteCollectionStatus.error;

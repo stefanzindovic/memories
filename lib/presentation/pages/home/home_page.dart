@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  List _pages = [
+  final List _pages = const [
     MemoriesFragment(),
     CollectionsFragment(),
     FavoritesFragment(),

@@ -12,7 +12,6 @@ import 'package:memories/providers/memory_data_provider.dart';
 import 'package:memories/providers/user_data_provider.dart';
 import 'package:memories/repository/collections_informations.dart';
 import 'package:memories/repository/memory_informations.dart';
-import 'package:memories/repository/secure_storage.dart';
 import 'package:memories/repository/user_authentication.dart';
 import 'package:memories/repository/user_informations.dart';
 import 'package:memories/theme/colors.dart';
@@ -59,9 +58,7 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: _email!, password: _password);
       status = RefreshUserAuthenticationStatus.success;
-      print('Sve je u redu!');
     } on FirebaseAuthException catch (e) {
-      print(e);
       if (e.code == 'user-not-found') {
         errorMessage =
             'Korisnik sa tom e-mail adresom ne postoji. Molimo vas da pokušate sa drugom e-mail adresom ili da kreirate novi korisniški račun.';
@@ -74,7 +71,6 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
       }
       status = RefreshUserAuthenticationStatus.error;
     } catch (e) {
-      print(e);
       status = RefreshUserAuthenticationStatus.error;
       errorMessage =
           'Trenutno nismo u mogućnosti da deaktiviramo vaš korisnički nalog. Molimo vas da pokušate ponovo malo kasnije.';
@@ -101,10 +97,8 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
       await UserInformations.deleteUserInfo();
       await UserInformations.deleteUserAccount();
 
-      print('Sve je u redu!');
       status = DeleteUserAccountStatus.success;
     } catch (e) {
-      print(e);
       status = DeleteUserAccountStatus.error;
       errorMessage =
           'Trenutno nismo u mogućnosti da deaktiviramo vaš korisnički nalog. Molimo vas da pokušate ponovo malo kasnije.';
@@ -116,7 +110,6 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
   Widget build(BuildContext context) {
     setState(
         () => _email = Provider.of<CurrentUserProvider>(context).credentials);
-    print(_email);
     setState(() => _collections =
         Provider.of<CollectionDataProvoder>(context).collections);
     setState(
@@ -148,7 +141,7 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
                   child: Column(
                     children: [
                       const Align(
-                        child: const Text('Lozinka'),
+                        child: Text('Lozinka'),
                         alignment: Alignment.topLeft,
                       ),
                       SizedBox(height: 10.h),
@@ -297,7 +290,7 @@ class _ConfirmIdentityPageState extends State<ConfirmIdentityPage> {
                                                         const CircularProgressIndicator(
                                                             color: lightColor),
                                                   )
-                                                : Text('Dalje'),
+                                                : const Text('Dalje'),
                                             style: ElevatedButton.styleFrom(
                                                 minimumSize: Size(90.w, 65.h),
                                                 primary: errorColor),

@@ -1,11 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:memories/models/collection.dart';
 import 'package:memories/theme/colors.dart';
 
+// ignore: must_be_immutable
 class CollectionCard extends StatelessWidget {
   CollectionModel collection;
   CollectionCard({

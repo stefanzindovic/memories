@@ -8,6 +8,7 @@ class SecureStorage {
     try {
       await _storage.deleteAll();
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
   }
@@ -19,6 +20,7 @@ class SecureStorage {
       await _storage.write(
           key: 'email', value: credential.user!.email.toString());
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
   }
@@ -27,6 +29,7 @@ class SecureStorage {
     try {
       return await _storage.read(key: 'uid');
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
   }
@@ -35,6 +38,7 @@ class SecureStorage {
     try {
       return await _storage.read(key: 'email');
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
   }

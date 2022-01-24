@@ -47,10 +47,8 @@ class _EditUserInfoPageState extends State<EditUserInfoPage> {
       }
       await UserInformations.updateUserInfo(
           _user!.uid, _name, _profilePhotoUrl);
-      print('Sve je u redu!');
       status = UpdateUserInfoStatus.success;
     } catch (e) {
-      print(e);
       status = UpdateUserInfoStatus.error;
       errorMessage =
           'Došlo je do neočekivane greške pri izmjeni vaših informacija. Molimo vas da pokušate ponovo.';
